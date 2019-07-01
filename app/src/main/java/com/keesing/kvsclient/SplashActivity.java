@@ -116,10 +116,13 @@ public class SplashActivity extends Activity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+
+        /*
+        new version (19172) doesn't have R.id.action_settings.
         if (id == R.id.action_settings)
         {
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
