@@ -4,6 +4,8 @@ package com.keesing.kvsclient;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -13,11 +15,26 @@ import androidx.appcompat.app.AlertDialog;
 import com.jenid.mobile.capture.controller.GenuineIDActivity;
 import com.keesing.kvsclient.utils.WebServiceHelper;
 import com.keesing.kvsclient.utils.WebServicePostOperation;
-
 public class ExperimentalActivity extends GenuineIDActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+        this.setBackgroundColor( Color.WHITE );
+        this.setPrimaryColor( Color.GRAY );
+        this.setFontColor1( Color.BLACK);
+        this.setFontColor2( Color.BLUE );
+
+        this.setTextFont( "fonts/Ubuntu-Regular.ttf" );
+        this.setSecondaryTextFont("fonts/Ubuntu-Italic.ttf");
+
+        this.setCorrectionColor( Color.LTGRAY );
+        this.setFaceColor1( Color.RED );
+        this.setFaceColor2( Color.GREEN );
+        this.setFaceTrackColor( Color.BLACK );
+        this.setFaceFeatureColor( Color.GREEN );
+        this.setWarnColor(Color.RED );
+
         super.onCreate(savedInstanceState);
 
         super.setTakePhotoTimeOut(15000);
@@ -124,8 +141,23 @@ public class ExperimentalActivity extends GenuineIDActivity {
     @Override
     public void renderButton(Button button) {
         super.renderButton(button);
+        button.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-Italic.ttf"));
+        button.setBackgroundColor(Color.GRAY);
         // button.setBackgroundColor(getResources().getColor(android.R.color.holo_green_light));
         // button.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void renderSecondaryButton(Button button){
+        super.renderSecondaryButton(button);
+        button.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-Italic.ttf"));
+        button.setBackgroundColor(Color.GREEN);
+    }
+
+    @Override
+    public void renderPhotoButton(Button button){
+        super.renderPhotoButton(button);
+        button.setBackgroundColor(Color.BLUE);
     }
 
     @Override
