@@ -20,20 +20,20 @@ public class ExperimentalActivity extends GenuineIDActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
-        this.setBackgroundColor( Color.WHITE );
-        this.setPrimaryColor( Color.GRAY );
-        this.setFontColor1( Color.BLACK);
-        this.setFontColor2( Color.BLUE );
+        // this.setBackgroundColor( Color.WHITE );
+        this.setPrimaryColor( getResources().getColor(R.color.keesingBlue) );
+        // this.setFontColor1( Color.BLACK);
+        // this.setFontColor2( getResources().getColor(R.color.keesingBlue) );
 
         this.setTextFont( "fonts/Ubuntu-Regular.ttf" );
         this.setSecondaryTextFont("fonts/Ubuntu-Italic.ttf");
 
-        this.setCorrectionColor( Color.LTGRAY );
-        this.setFaceColor1( Color.RED );
-        this.setFaceColor2( Color.GREEN );
-        this.setFaceTrackColor( Color.BLACK );
-        this.setFaceFeatureColor( Color.GREEN );
-        this.setWarnColor(Color.RED );
+        //this.setCorrectionColor( getResources().getColor(R.color.keesingBlue) );
+        //this.setFaceColor1( Color.RED );
+        //this.setFaceColor2( Color.GREEN );
+        //this.setFaceTrackColor( Color.BLACK );
+        //this.setFaceFeatureColor( Color.GREEN );
+        //this.setWarnColor(Color.RED );
 
         super.onCreate(savedInstanceState);
 
@@ -142,7 +142,7 @@ public class ExperimentalActivity extends GenuineIDActivity {
     public void renderButton(Button button) {
         super.renderButton(button);
         button.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-Italic.ttf"));
-        button.setBackgroundColor(Color.GRAY);
+        button.setBackgroundColor(getResources().getColor(R.color.keesingBlue));
         // button.setBackgroundColor(getResources().getColor(android.R.color.holo_green_light));
         // button.setVisibility(View.VISIBLE);
     }
@@ -151,14 +151,14 @@ public class ExperimentalActivity extends GenuineIDActivity {
     public void renderSecondaryButton(Button button){
         super.renderSecondaryButton(button);
         button.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-Italic.ttf"));
-        button.setBackgroundColor(Color.GREEN);
+        button.setBackgroundColor(Color.GRAY);
     }
 
     @Override
     public void renderPhotoButton(Button button){
         super.renderPhotoButton(button);
-        button.setBackgroundColor(Color.BLUE);
     }
+
 
     @Override
     public void backPressed() {
