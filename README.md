@@ -2,27 +2,27 @@
 
 List of Contents
 
-- [Android SDK](#Android-SDK)
-  - [Incorporating the SDK](#Incorporating-the-SDK)
-  - [Using JenID Activity](#Using-JenID-Activity)
-  - [Using own Activity by extending JenID's component](#Using-own-Activity-by-extending-JenIDs-component)
-    - [How it works](#How-it-works)
-  - [Receiving data from SDK](#Receiving-data-from-SDK)
-    - [Approach One (Using GenuineIDActivity)](#Approach-One-Using-GenuineIDActivity)
-    - [Approach Two (Customizing and Extending SDK)](#Approach-Two-Customizing-and-Extending-SDK)
-- [Android Capture SDK (Integration Details)](#Android-Capture-SDK-Integration-Details)
-  - [System Requirements](#System-Requirements)
-  - [Access Rights](#Access-Rights)
-  - [Example Project](#Example-Project)
-  - [GenuineIDActivity](#GenuineIDActivity)
-  - [Integration](#Integration)
-  - [Using the class](#Using-the-class)
-    - [Configuration](#Configuration)
-    - [Initializing the class](#Initializing-the-class)
-    - [Code Example](#Code-Example)
-    - [Send Data](#Send-Data)
-    - [Retrieve Data](#Retrieve-Data)
-- [UI Customization](#UI-Customization)
+- [Android SDK](#android-sdk)
+  - [Incorporating the SDK](#incorporating-the-sdk)
+  - [Using JenID Activity](#using-jenid-activity)
+  - [Using own Activity by extending JenID's component](#using-own-activity-by-extending-jenids-component)
+    - [How it works](#how-it-works)
+  - [Receiving data from SDK](#receiving-data-from-sdk)
+    - [Approach One (Using GenuineIDActivity)](#approach-one-using-genuineidactivity)
+    - [Approach Two (Customizing and Extending SDK)](#approach-two-customizing-and-extending-sdk)
+- [Android Capture SDK (Integration Details)](#android-capture-sdk-integration-details)
+  - [System Requirements](#system-requirements)
+  - [Access Rights](#access-rights)
+  - [Example Project](#example-project)
+  - [GenuineIDActivity](#genuineidactivity)
+  - [Integration](#integration)
+  - [Using the class](#using-the-class)
+    - [Configuration](#configuration)
+    - [Initializing the class](#initializing-the-class)
+    - [Code Example](#code-example)
+    - [Send Data](#send-data)
+    - [Retrieve Data](#retrieve-data)
+- [UI Customization](#ui-customization)
 
 ---
 
@@ -454,27 +454,27 @@ try
 
 UI customization is possible via various methods available is the main activity, following list is those methods.
 
-- setBackgroundColor
-- setPrimaryColor
-- setFontColor1
-- setFontColor2
-- setTextFont
-- setSecondaryTextFont
-- setCorrectionColor
-- setFaceColor1
-- setFaceColor2
-- setFaceTrackColor
-- setFaceFeatureColor
-- setWarnColor
+- **setBackgroundColor**: sets the background color of the capturing UI pages.
+- **setPrimaryColor**: sets the primary color which is suitable to set the enterprice color code.
+- **setFontColor1**: sets one of the two font color of the capturing UI pages.
+- **setFontColor2**: same as `setFontColor1`.
+- **setTextFont**: sets the primary font of all textes available in the capturing process pages.
+- **setSecondaryTextFont**: sets the fonts of pages after main page.
+- **setCorrectionColor**: sets the color of the rectangle shown druring the manual capturing (when automatic capturing fails).
+- **setFaceColor1**: sets the color of an indicator over the face during liveness check.
+- **setFaceColor2**: sets the color of an indicator over the face when face detection succeeds.
+- **setFaceTrackColor**: sets the color of square arround the face during the liveness check.
+- **setFaceFeatureColor**: sets the color of the squares around face features (eyes/mouth) during liveness check.
+- **setWarnColor**: sets the warning color while process failed during capturing or liveness check process.
 
 Also by overriding three methods in main activity we can aply UI changes in buttons available in the capturing process, please see below code example.
 
-```java 
+```java
  @Override
     public void renderButton(Button button) {
         super.renderButton(button);
         button.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-Italic.ttf"));
-        button.setBackgroundColor(getResources().getColor(R.color.keesingBlue));        
+        button.setBackgroundColor(getResources().getColor(R.color.keesingBlue));
     }
 
     @Override
