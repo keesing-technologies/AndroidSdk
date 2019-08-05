@@ -12,6 +12,7 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.jenid.mobile.capture.configuration.DeviceSupport;
 import com.jenid.mobile.capture.controller.GenuineIDActivity;
 import com.keesing.kvsclient.utils.WebServiceHelper;
 import com.keesing.kvsclient.utils.WebServicePostOperation;
@@ -164,4 +165,18 @@ public class ExperimentalActivity extends GenuineIDActivity {
     public void backPressed() {
         System.exit(0);
     }
+
+   @Override
+   public void doAfterDeviceIsNotSupported(DeviceSupport deviceSupport) {
+       AlertDialog.Builder builder = new AlertDialog.Builder(ExperimentalActivity.this);
+       builder
+               .setTitle("Device not supported")
+               .setMessage( "Problem happened running application <Cause: "  + deviceSupport.toString() + ">")
+               .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                   public void onClick(DialogInterface dialog, int which) {
+                       System.exit(0);
+                   }
+               }).setIcon(android.R.drawable.ic_dialog_alert)
+               .show();
+   }
 }

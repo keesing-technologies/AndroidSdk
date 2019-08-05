@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.keesing.kvsclient"
-        minSdkVersion 17
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -27,8 +27,8 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
-    api(name: 'Genuine-ID_Mobile_Core_3_0_1_19183', ext: 'aar')
-    api(name: 'Genuine-ID_Mobile_Capture_3_0_1_19183', ext: 'aar')
+    api(name: 'Genuine-ID_Mobile_Core_3_0_2_19191', ext: 'aar')
+    api(name: 'Genuine-ID_Mobile_Capture_3_0_2_19191', ext: 'aar')
 
     /*api project(path: ':GenuineID_Mobile_Core-3_0_1_19128')
     api project(path: ':GenuineID_Mobile_DocFinder-1_3_1_16329')
