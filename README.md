@@ -28,11 +28,11 @@ List of Contents
 
 # Android SDK
 
-JenID has provided a SDK to facilitate taking document picture and performing facial recognition in Android, it also contains some usefull utilities as well.
+JenID has provided a SDK to facilitate taking document picture and performing facial recognition in Android, it also contains some useful utilities as well.
 
 ## Incorporating the SDK
 
-inorder to incorporate the SDK App developer needs to import 2 main libraries (like below example)
+In order to incorporate the SDK App developer needs to import 2 main libraries (like below example)
 
 Put these lines in `build.gradle` (App) (next sections contain more detailed information)
 
@@ -43,7 +43,7 @@ api(name: 'Genuine-ID_Mobile_Capture_3_0_1_19128', ext: 'aar')
 
 ## Using JenID Activity
 
-By using this approach App developer easy just extends `GenuineIDActivity` and only receives neccessary data after performing a document scan (with/without facial recognition).
+By using this approach App developer easy just extends `GenuineIDActivity` and only receives necessary data after performing a document scan (with/without facial recognition).
 
 > For detailed information about this approach check out JenId documentation (see [Appendixes](#genuine-id-android-capture-sdk)).
 
@@ -53,7 +53,7 @@ This approach needs more coding and carefully handling different scenarios of sc
 
 ### How it works
 
-Basically the JenID Android SDK designed to do its job by using *Android Fragment*s, Infact by extending few underlaying _Fragments_ App developer can setup a full wizard steps for document scanning.
+Basically, the JenID Android SDK designed to do its job by using *Android Fragment*s, In fact by extending few underlaying _Fragments_ App developer can setup a full wizard steps for document scanning.
 
 **Example**
 To understanding how SDK works checkout the `CaptureFragment` implementation.
@@ -75,13 +75,13 @@ public abstract class GenuineIDFragment extends GenuineIDBaseCamera2Fragment imp
 }
 ```
 
-App developer can ignore using `CaptureFragment` and develop his own _Fragment_ like `GenuineIDFragment` and implement all prequistic actions (starting camera, taking picture and etcetra) and then use `DocFinderRunnable` or `DocFinder` classes in order to possibly find present document in the image.
+App developer can ignore using `CaptureFragment` and develop his own _Fragment_ like `GenuineIDFragment` and implement all required actions (starting camera, taking picture, etc..) and then use `DocFinderRunnable` or `DocFinder` classes in order to possibly find present document in the image.
 
 > It is worthwhile to checkout implementation of mentioned _Fragments_ available from the JenID SDK.
 
 ## Receiving data from SDK
 
-No matter what approach would be used to exploit JenID SDK, Ultimately SDK provides App developer with a `JSON` object which called payload and few other data in different types (String, Bitmap) that corespond to the images of scanned document and facial recognition steps.
+No matter what approach would be chosen to use JenID SDK, Ultimately SDK provides App developer with a `JSON` object which called payload and few other data in different types (String, Bitmap) that corespond to the images of scanned document and facial recognition steps.
 
 ### Approach One (Using GenuineIDActivity)
 
@@ -89,12 +89,12 @@ Please refer to JenID SDK documentation for complete and detailed information.
 
 ### Approach Two (Customizing and Extending SDK)
 
-Its highly recommanded to review `GenuineIDActivity` implementation code to understand how the SDK works and payload gets constructed, but briefly, After implementing the _Fragments_ and wiring them up correctly they will return pieces of data objects corresponding to images of scanned document and liveness validation steps which can be converted to **Base64String** by some utility methods provided by SDK.
+Its highly recommended to review `GenuineIDActivity` implementation code to understand how the SDK works and payload gets constructed, but briefly, After implementing the _Fragments_ and wiring them up correctly they will return pieces of data objects corresponding to images of scanned document and liveness validation steps which can be converted to **Base64String** by some utility methods provided by SDK.
 
 # Android Capture SDK (Integration Details)
 
 The Genuine-ID Capture SDK provides functionality to integrate ID document and facial capture functionality
-into your App to be later on verified by the Genuine-ID CLOUD (or a Genuine-ID HUB Server on premises installation).
+into your App to be verified by the Genuine-ID CLOUD (or a Genuine-ID HUB Server on premises installation).
 The API is easy and simple to understand to limit the effort for integration and encapsulates all the complicated
 image processing functions for you. You simply need to integrate and configure only one _Activity_: GenuineIDActivity.
 
@@ -105,7 +105,7 @@ A minimum of 2GB RAM is required and a quad core with at least 1.5 GHz is prefer
 
 ## Access Rights
 
-The SDK needs demands access to cameras and memory. The user has to grant this rights otherwise your App will not work as expected.
+The SDK needs access to cameras and memory. The user has to grant these rights otherwise your App will not work as expected.
 
 ## Example Project
 
@@ -132,7 +132,7 @@ proportions in an image. It does make a difference if we search a _TD1_ or _TD3_
 
 The capturing process consists of two sub steps. First the user takes an image, whether
 automatically or manually (after the automatic process took too long). Second the user reviews
-the found document and is able to correct it if needed. The better the cropping result, the
+the found document and can correct it if needed. The better the cropping result, the
 better the verification of the document will perform.
 
 Also note, that the last two steps are optional. It is possible to configure the _Activity_ to
@@ -190,17 +190,17 @@ presenting the found document and the face image to the end user and starting ne
 and so on.
 
 In either way the instance will provide you the images in different formats
-and the compiled JSON formated payload to be send to the Genuine-ID HUB Server (e.g. our Cloud Demo Server).
+and the compiled JSON formatted payload to be send to the Genuine-ID HUB Server (e.g. our Cloud Demo Server).
 
 The call backs will have the following parameters:
 
 - Bitmap frontImage -- the image of first captured side
 - String encodedFrontImage -- base64 encoded format of the image
-- Bitmap backImage -- the image of the second captured side of a double sided document; empty in case of a passport document,
+- Bitmap backImage -- the image of the second captured side of a double-sided document; empty in case of a passport document,
 - String encodedBackImage -- base64 encoded format of the image
 - Bitmap faceImage -- facial image in case face capture is enabled or empty if face capture is disabled(see configuration)
 - String encodedFaceImage -- base64 encoded format of the image
-- String completeJsonPayload -- JSON formated payload as input for the Genuine-ID HUB Server
+- String completeJsonPayload -- JSON formatted payload as input for the Genuine-ID HUB Server
 
 The resulting images of the pages of the document come in both, a _Bitmap_
 and a Base64 _String_ representation. The former could be used for your individual processing
@@ -216,10 +216,9 @@ and will be rejected by the server.
 **Important**:
 The process of finding documents in a camera frame uses sophisticated techniques consisting of
 machine learning algorithms. The nature of them is, that they need proper initialization.
-Unfortunately this is a somehow time consuming process, which can take up to 1 - 3 seconds
-depending of the hardware being used. This initialization process has to be called only once,
-nevertheless it can influence the end users App experience. There is a solution for this: do the
-initialization right after for example the splash screen, and not while loading a controller
+This process can about 1 to 3 seconds
+depending on the hardware being used. This initialization process must be called only once,
+To avoid the delay, do the initialization right after for example the splash screen, and not while loading a controller
 using this framework.
 
 ### Configuration
@@ -458,16 +457,16 @@ UI customization is possible via various methods available is the main activity,
 - **setPrimaryColor**: sets the primary color which is suitable to set the enterprice color code.
 - **setFontColor1**: sets one of the two font color of the capturing UI pages.
 - **setFontColor2**: same as `setFontColor1`.
-- **setTextFont**: sets the primary font of all textes available in the capturing process pages.
+- **setTextFont**: sets the primary font of all texts available in the capturing process pages.
 - **setSecondaryTextFont**: sets the fonts of pages after main page.
-- **setCorrectionColor**: sets the color of the rectangle shown druring the manual capturing (when automatic capturing fails).
+- **setCorrectionColor**: sets the color of the rectangle shown during the manual capturing (when automatic capturing fails).
 - **setFaceColor1**: sets the color of an indicator over the face during liveness check.
 - **setFaceColor2**: sets the color of an indicator over the face when face detection succeeds.
-- **setFaceTrackColor**: sets the color of square arround the face during the liveness check.
+- **setFaceTrackColor**: sets the color of square around the face during the liveness check.
 - **setFaceFeatureColor**: sets the color of the squares around face features (eyes/mouth) during liveness check.
 - **setWarnColor**: sets the warning color while process failed during capturing or liveness check process.
 
-Also by overriding three methods in main activity we can aply UI changes in buttons available in the capturing process, please see below code example.
+Also by overriding three methods in main activity we can apply UI changes in buttons available in the capturing process, please see below code example.
 
 ```java
  @Override
