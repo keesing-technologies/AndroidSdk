@@ -123,20 +123,22 @@ public class ExperimentalActivity extends GenuineIDActivity {
             String encodedBackImage,
             String completePayload) {
 
+        // here app developer can check if the payload contains certain info (like captured image and not liveness-check) and decide what to do
 
-        this.runOnUiThread(new Runnable() {
+        ExperimentalActivity.this.navigateBackHere();
+        /*this.runOnUiThread(new Runnable() {
             public void run() {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ExperimentalActivity.this);
                 builder.setTitle(R.string.detection_failed_title)
                         .setMessage(R.string.detection_failed_desc)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                System.exit(0);
+
                             }
                         })
                         .show();
             }
-        });
+        });*/
     }
 
     @Override
