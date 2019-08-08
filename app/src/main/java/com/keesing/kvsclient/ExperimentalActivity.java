@@ -21,20 +21,9 @@ public class ExperimentalActivity extends GenuineIDActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
-        // this.setBackgroundColor( Color.WHITE );
         this.setPrimaryColor( getResources().getColor(R.color.keesingBlue) );
-        // this.setFontColor1( Color.BLACK);
-        // this.setFontColor2( getResources().getColor(R.color.keesingBlue) );
-
         this.setTextFont( "fonts/Ubuntu-Regular.ttf" );
         this.setSecondaryTextFont("fonts/Ubuntu-Italic.ttf");
-
-        //this.setCorrectionColor( getResources().getColor(R.color.keesingBlue) );
-        //this.setFaceColor1( Color.RED );
-        //this.setFaceColor2( Color.GREEN );
-        //this.setFaceTrackColor( Color.BLACK );
-        //this.setFaceFeatureColor( Color.GREEN );
-        //this.setWarnColor(Color.RED );
 
         super.onCreate(savedInstanceState);
 
@@ -122,23 +111,7 @@ public class ExperimentalActivity extends GenuineIDActivity {
             Bitmap backImage,
             String encodedBackImage,
             String completePayload) {
-
-        // here app developer can check if the payload contains certain info (like captured image and not liveness-check) and decide what to do
-
         ExperimentalActivity.this.navigateBackHere();
-        /*this.runOnUiThread(new Runnable() {
-            public void run() {
-                AlertDialog.Builder builder = new AlertDialog.Builder(ExperimentalActivity.this);
-                builder.setTitle(R.string.detection_failed_title)
-                        .setMessage(R.string.detection_failed_desc)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        })
-                        .show();
-            }
-        });*/
     }
 
     @Override
@@ -146,8 +119,6 @@ public class ExperimentalActivity extends GenuineIDActivity {
         super.renderButton(button);
         button.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-Italic.ttf"));
         button.setBackgroundColor(getResources().getColor(R.color.keesingBlue));
-        // button.setBackgroundColor(getResources().getColor(android.R.color.holo_green_light));
-        // button.setVisibility(View.VISIBLE);
     }
 
     @Override
