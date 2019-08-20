@@ -29,7 +29,7 @@ dependencies {
 
     api(name: 'Genuine-ID_Mobile_Core_3_0_2_19191', ext: 'aar')
     api(name: 'Genuine-ID_Mobile_Capture_3_0_2_19191', ext: 'aar')
-    // api(name: 'Genuine-ID_Mobile_MRZ_3_0_2_19191', ext: 'aar')
+    api(name: 'Genuine-ID_Mobile_MRZ_3_0_2_19191', ext: 'aar')
     api(name: 'epassportapi', ext: 'aar')
 
     /*api project(path: ':GenuineID_Mobile_Core-3_0_1_19128')

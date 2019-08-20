@@ -17,6 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:screenOrientation="sensorPortrait"
        >
         <activity android:name=".SplashActivity">
             <intent-filter>
@@ -31,6 +32,7 @@
 
         <activity android:name=".MainActivity" android:label="MainActivity"></activity>
         <activity android:name=".RfidActivity" android:label="RfidActivity"></activity>
+        <activity android:name=".MRZCaptureActivity" android:label="MRZCaptureActivity"></activity>
 
     </application>
 

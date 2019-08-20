@@ -3,14 +3,18 @@ package com.keesing.kvsclient;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 
-//import com.jenid.genuineidmobilemrz.controller.GenuineIDMRZActivity;
+import com.jenid.genuineidmobilemrz.controller.GenuineIDMRZActivity;
+import com.jenid.genuineidmobilemrz.controller.GenuineIDMRZCallback;
 
-public class MRZCaptureActivity  { //extends GenuineIDMRZActivity {
+public class MRZCaptureActivity  extends GenuineIDMRZActivity implements GenuineIDMRZCallback {
 
-  /*  @Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i("MRZCaptureActivity", "Creating this view");
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_mrz_capture);
     }
 
     @Override
@@ -22,11 +26,11 @@ public class MRZCaptureActivity  { //extends GenuineIDMRZActivity {
         intent.putExtra("chcksm", checksum);
         intent.putExtra("proctime", String.format("%1$,.2f", new Object[] { Double.valueOf(processingTime) }));
         startActivity(intent);
-        finish();
+        // finish();
     }
 
     @Override
     public void back() {
 
-    }*/
+    }
 }
