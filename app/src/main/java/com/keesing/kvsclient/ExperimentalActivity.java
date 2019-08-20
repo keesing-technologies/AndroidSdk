@@ -8,6 +8,9 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AlertDialog;
@@ -16,13 +19,14 @@ import com.jenid.mobile.capture.configuration.DeviceSupport;
 import com.jenid.mobile.capture.controller.GenuineIDActivity;
 import com.keesing.kvsclient.utils.WebServiceHelper;
 import com.keesing.kvsclient.utils.WebServicePostOperation;
+
 public class ExperimentalActivity extends GenuineIDActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
-        this.setPrimaryColor( getResources().getColor(R.color.keesingBlue) );
-        this.setTextFont( "fonts/Ubuntu-Regular.ttf" );
+        this.setPrimaryColor(getResources().getColor(R.color.keesingBlue));
+        this.setTextFont("fonts/Ubuntu-Regular.ttf");
         this.setSecondaryTextFont("fonts/Ubuntu-Italic.ttf");
 
         super.onCreate(savedInstanceState);
@@ -117,19 +121,19 @@ public class ExperimentalActivity extends GenuineIDActivity {
     @Override
     public void renderButton(Button button) {
         super.renderButton(button);
-        button.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-Italic.ttf"));
+        button.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Ubuntu-Italic.ttf"));
         button.setBackgroundColor(getResources().getColor(R.color.keesingBlue));
     }
 
     @Override
-    public void renderSecondaryButton(Button button){
+    public void renderSecondaryButton(Button button) {
         super.renderSecondaryButton(button);
-        button.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/Ubuntu-Italic.ttf"));
+        button.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Ubuntu-Italic.ttf"));
         button.setBackgroundColor(Color.GRAY);
     }
 
     @Override
-    public void renderPhotoButton(Button button){
+    public void renderPhotoButton(Button button) {
         super.renderPhotoButton(button);
     }
 
@@ -139,17 +143,19 @@ public class ExperimentalActivity extends GenuineIDActivity {
         System.exit(0);
     }
 
-   @Override
-   public void doAfterDeviceIsNotSupported(DeviceSupport deviceSupport) {
-       AlertDialog.Builder builder = new AlertDialog.Builder(ExperimentalActivity.this);
-       builder
-               .setTitle("Device not supported")
-               .setMessage( "Problem happened running application <Cause: "  + deviceSupport.toString() + ">")
-               .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                   public void onClick(DialogInterface dialog, int which) {
-                       System.exit(0);
-                   }
-               }).setIcon(android.R.drawable.ic_dialog_alert)
-               .show();
-   }
+    @Override
+    public void doAfterDeviceIsNotSupported(DeviceSupport deviceSupport) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ExperimentalActivity.this);
+        builder
+                .setTitle("Device not supported")
+                .setMessage("Problem happened running application <Cause: " + deviceSupport.toString() + ">")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        System.exit(0);
+                    }
+                }).setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+
 }

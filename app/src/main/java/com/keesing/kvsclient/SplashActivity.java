@@ -23,27 +23,21 @@ public class SplashActivity extends Activity {
     private final int writeExternal = 0;
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
-    {
-        switch (requestCode)
-        {
-            case writeExternal :
-            {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case writeExternal: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the
                     // camera/storage-related task you need to do.
 
                     goOn();
-                }
-                else
-                {
+                } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
 
                     Intent homeIntent = new Intent(Intent.ACTION_MAIN);
-                    homeIntent.addCategory( Intent.CATEGORY_HOME );
+                    homeIntent.addCategory(Intent.CATEGORY_HOME);
                     homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(homeIntent);
                     // close the app
@@ -58,38 +52,30 @@ public class SplashActivity extends Activity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_splash);
 
         ArrayList<String> permissions = new ArrayList<String>();
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-        {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.CAMERA);
         }
 
-        if (permissions.size() > 0)
-        {
+        if (permissions.size() > 0) {
             String[] perms = new String[permissions.size()];
             perms = permissions.toArray(perms);
             ActivityCompat.requestPermissions(this, perms, writeExternal);
-        }
-        else
-        {
+        } else {
             goOn();
         }
     }
 
-    private void goOn()
-    {
-        new Handler().postDelayed(new Runnable()
-        {
+    private void goOn() {
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 {
                     // IMPORTANT initialization !!!
                     // initialize static content...
@@ -97,7 +83,7 @@ public class SplashActivity extends Activity {
                     docFinder.init();
 
                     // This method will be executed once the timer is over
-                    Intent i = new Intent( SplashActivity.this, ExperimentalActivity.class );
+                    Intent i = new Intent(SplashActivity.this, MainActivity.class);
                     startActivity(i);
 
                     // close this activity
@@ -108,8 +94,7 @@ public class SplashActivity extends Activity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
