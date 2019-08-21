@@ -6,10 +6,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
+import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -17,13 +21,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 
 import com.keesing.kvsclient.rfid.Logger;
 import com.keesing.kvsclient.rfid.PassportReader;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 import com.secunet.epassportapi.Framework;
 import com.secunet.epassportapi.Image;
 import com.secunet.epassportapi.ImageList;
 import com.secunet.epassportapi.Passport;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.TimeoutException;
 
 public class RfidActivity extends Activity {
 
@@ -32,6 +45,8 @@ public class RfidActivity extends Activity {
     private EditText mrzEdit;
     private TextView log;
     private ImageView imgChip;
+    private int REQUEST_TAKE_PHOTO = 125630;
+    private String currentPhotoPath;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,13 +56,18 @@ public class RfidActivity extends Activity {
         findViewById(R.id.btnMrzRead).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(RfidActivity.this, MRZCaptureActivity.class ));
+                dispatchTakePictureIntent();
             }
         });
+        Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/Ubuntu-Regular.ttf");
 
         log = findViewById(R.id.txtOut);
-        mrzEdit = (EditText)findViewById(R.id.mrz);
+        log.setTypeface(typeFace);
+
+        mrzEdit = (EditText) findViewById(R.id.mrz);
+        mrzEdit.setTypeface(typeFace);
         mrzEdit.setText("P<HUNKARPATI<<VIKTORIA<<<<<<<<<<<<<<<<<<<<<<\nHU12345600HUN9202287F1501010123456782<<<<<04");
+
         imgChip = findViewById(R.id.imgChip);
 
         reader = new PassportReader();
@@ -56,7 +76,57 @@ public class RfidActivity extends Activity {
 
     }
 
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createTemporaryImage();
+            } catch (IOException ex) {
+                Log.e("KEESING.TAKE_PICTURE", ex.getMessage());
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.keesing.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
 
+    private File createTemporaryImage() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            final Bitmap imageBitmap = (Bitmap) extras.get("data");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    imgChip.setImageBitmap(imageBitmap);
+                }
+            });
+        }
+    }
 
     @Override
     protected void onResume() {
@@ -88,7 +158,7 @@ public class RfidActivity extends Activity {
             if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction()) || NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
                 final Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
                 final IsoDep tag = IsoDep.get(tagFromIntent);
-                if(tag != null) {
+                if (tag != null) {
                     clearlog();
                     log("ISO tag found...");
                     log("Extended Length APDU support: " + tag.isExtendedLengthApduSupported());
@@ -97,18 +167,19 @@ public class RfidActivity extends Activity {
                     tag.setTimeout(5000);
                     final String mrz = mrzEdit.getText().toString().replace("\n", "").replace("\r", "").replace(" ", "");
                     // todo: cancel possibly running thread; ePassportAPI MUST NOT be used reentrant
-                    new Thread(new Runnable() { public void run() { readPassport(tag, mrz); } }).start();
+                    new Thread(new Runnable() {
+                        public void run() {
+                            readPassport(tag, mrz);
+                        }
+                    }).start();
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             log("Error: " + e.getMessage());
         }
     }
 
-    private void readPassport(IsoDep tag, String mrz)
-    {
+    private void readPassport(IsoDep tag, String mrz) {
         reader.setTag(tag);
 
         try {
@@ -145,21 +216,18 @@ public class RfidActivity extends Activity {
                     }
                 });
                 log("reading finished");
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 Log.e("READING", e.getMessage());
                 log(e.getMessage());
-            } finally{
+            } finally {
                 p.delete();
             }
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             log("reading failed: " + ex.getMessage());
         }
     }
 
-    private void clearlog()
-    {
+    private void clearlog() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -174,8 +242,7 @@ public class RfidActivity extends Activity {
         });
     }
 
-    private void log(final String message)
-    {
+    private void log(final String message) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -183,5 +250,17 @@ public class RfidActivity extends Activity {
                 log.append(message);
             }
         });
+    }
+
+    private void sendImageToMrzReaderService() throws IOException, TimeoutException {
+        ConnectionFactory factory = new ConnectionFactory();
+// "guest"/"guest" by default, limited to localhost connections
+     /*   factory.setUsername(userName);
+        factory.setPassword(password);
+        factory.setVirtualHost(virtualHost);
+        factory.setHost(hostName);
+        factory.setPort(portNumber);*/
+
+        Connection conn = factory.newConnection();
     }
 }
