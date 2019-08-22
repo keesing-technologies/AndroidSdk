@@ -72,6 +72,7 @@ public class RfidActivity extends Activity {
         mrzEdit = (EditText) findViewById(R.id.mrz);
         mrzEdit.setTypeface(typeFace);
         mrzEdit.setText("P<HUNKARPATI<<VIKTORIA<<<<<<<<<<<<<<<<<<<<<<\nHU12345600HUN9202287F1501010123456782<<<<<04");
+        //mrzEdit.setText("P<NLDGROOS<<HERMAN<<<<<<<<<<<<<<<<<<<<<<<<<<\nNRL8B30500NLD7207222M2403133167605811<<<<<96");
 
         imgChip = findViewById(R.id.imgChip);
 
@@ -205,19 +206,27 @@ public class RfidActivity extends Activity {
         try {
             Passport p = new Passport(framework);
             try {
-                log("perform BAC...");
+                log("Perform BAC...");
                 p.performBAC(mrz);
+
+                //log("Perform PACE...");
+                //p.performPACE(mrz);
+
                 if (p.getChipAuthenticationVersion() == 1) {
                     log("Chip authentication...");
                     p.performChipAuthentication();
                 } else if (p.supportsActiveAuthentication()) {
                     log("Active authentication...");
+                    // simple way of checking of the chip structure
                     p.performActiveAuthentication();
                 }
                 log("Datagroup 1...");
                 byte[] dg1 = p.getDatagroup(1);
-
                 log("MRZ (chip): " + framework.getMRZ(dg1));
+
+                byte[] certificate = p.getDocumentSignerCertificate(Passport.FileType.EfSod);
+                log("Certificate data: " + String.valueOf(certificate));
+
                 log("Datagroup 2...");
                 byte[] dg2 = p.getDatagroup(2);
                 ImageList images = framework.getImages(dg2);
@@ -274,12 +283,14 @@ public class RfidActivity extends Activity {
 
     private void sendImageToMrzReaderService() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
-// "guest"/"guest" by default, limited to localhost connections
-     /*   factory.setUsername(userName);
-        factory.setPassword(password);
-        factory.setVirtualHost(virtualHost);
-        factory.setHost(hostName);
-        factory.setPort(portNumber);*/
+        // "guest"/"guest" by default, limited to localhost connections
+        /*
+            factory.setUsername(userName);
+            factory.setPassword(password);
+            factory.setVirtualHost(virtualHost);
+            factory.setHost(hostName);
+            factory.setPort(portNumber);
+        */
 
         Connection conn = factory.newConnection();
     }
