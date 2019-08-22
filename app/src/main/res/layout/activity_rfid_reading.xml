@@ -6,20 +6,29 @@
     android:orientation="vertical"
     android:padding="15dp">
 
-    <Button
-        android:id="@+id/btnMrzRead"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Capture MRZ" />
 
-    <TextView
-        style="@style/title"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/rfid_page_title" />
+        android:layout_height="wrap_content" android:orientation="horizontal">
+
+        <TextView android:layout_weight="0.3" android:id="@+id/rfidPageTitle"
+            style="@style/info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rfid_page_title" />
+
+        <Button android:visibility="gone"
+            android:id="@+id/btnMrzRead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Capture MRZ" />
+
+    </LinearLayout>
+
+
 
     <EditText
-        android:id="@+id/mrz"
+        android:id="@+id/mrz" android:textSize="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

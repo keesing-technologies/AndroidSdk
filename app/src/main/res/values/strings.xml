@@ -38,6 +38,6 @@ ZHJvaWQhQHdDo1ay3wwDZMiC55uGkgT5/78nhNKUolD8DmfMdqVtv3nsj4WXzWB9
 hqsUqZgaS5kulHoSOPnC/8u9GF68PkQ=
 
 ----- LICENSE TEXT END -----</string>
-    <string name="rfid_page_title">Place the phone on the document with RFID Tag</string>
+    <string name="rfid_page_title">Insert MRZ and place the document under the phone.</string>
 
 </resources>

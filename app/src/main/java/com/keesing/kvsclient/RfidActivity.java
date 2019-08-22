@@ -16,6 +16,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -48,6 +49,7 @@ public class RfidActivity extends Activity {
     private int REQUEST_TAKE_PHOTO = 125630;
     private String currentPhotoPath;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,14 +58,17 @@ public class RfidActivity extends Activity {
         findViewById(R.id.btnMrzRead).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dispatchTakePictureIntent();
+               // dispatchTakePictureIntent();
             }
         });
         Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/Ubuntu-Regular.ttf");
 
+        ((Button)findViewById(R.id.btnMrzRead)).setTypeface(typeFace);
+
         log = findViewById(R.id.txtOut);
         log.setTypeface(typeFace);
 
+        ((TextView)findViewById(R.id.rfidPageTitle)).setTypeface(typeFace);
         mrzEdit = (EditText) findViewById(R.id.mrz);
         mrzEdit.setTypeface(typeFace);
         mrzEdit.setText("P<HUNKARPATI<<VIKTORIA<<<<<<<<<<<<<<<<<<<<<<\nHU12345600HUN9202287F1501010123456782<<<<<04");
@@ -117,14 +122,29 @@ public class RfidActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            final Bitmap imageBitmap = (Bitmap) extras.get("data");
-            runOnUiThread(new Runnable() {
+
+            // check if there is any data provided (thumbnail from the camera app)
+            if (data != null) {
+                Bundle extras = data.getExtras();
+                final Bitmap imageBitmap = (Bitmap) extras.get("data");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        imgChip.setImageBitmap(imageBitmap);
+                    }
+                });
+            }
+
+            // here we can send this picture to MRZ reader
+            /*runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    imgChip.setImageBitmap(imageBitmap);
+                    imgChip.setImageURI(FileProvider.getUriForFile(RfidActivity.this,
+                            "com.keesing.fileprovider",
+                            new File(currentPhotoPath)));
                 }
-            });
+            });*/
+
         }
     }
 
@@ -163,7 +183,7 @@ public class RfidActivity extends Activity {
                     log("ISO tag found...");
                     log("Extended Length APDU support: " + tag.isExtendedLengthApduSupported());
                     log("Max. APDU size: " + tag.getMaxTransceiveLength());
-                    log("setting APDU timeout...");
+                    log("Setting APDU timeout...");
                     tag.setTimeout(5000);
                     final String mrz = mrzEdit.getText().toString().replace("\n", "").replace("\r", "").replace(" ", "");
                     // todo: cancel possibly running thread; ePassportAPI MUST NOT be used reentrant
@@ -188,17 +208,17 @@ public class RfidActivity extends Activity {
                 log("perform BAC...");
                 p.performBAC(mrz);
                 if (p.getChipAuthenticationVersion() == 1) {
-                    log("perform chip authentication...");
+                    log("Chip authentication...");
                     p.performChipAuthentication();
                 } else if (p.supportsActiveAuthentication()) {
-                    log("perform active authentication...");
+                    log("Active authentication...");
                     p.performActiveAuthentication();
                 }
-                log("read datagroup 1...");
+                log("Datagroup 1...");
                 byte[] dg1 = p.getDatagroup(1);
 
                 log("MRZ (chip): " + framework.getMRZ(dg1));
-                log("read datagroup 2...");
+                log("Datagroup 2...");
                 byte[] dg2 = p.getDatagroup(2);
                 ImageList images = framework.getImages(dg2);
                 log("Chip contains " + images.getImageCount() + " Images");
@@ -215,7 +235,7 @@ public class RfidActivity extends Activity {
                         imgChip.setImageBitmap(bm);
                     }
                 });
-                log("reading finished");
+                log("Reading Finished");
             } catch (Exception e) {
                 Log.e("READING", e.getMessage());
                 log(e.getMessage());
@@ -223,7 +243,7 @@ public class RfidActivity extends Activity {
                 p.delete();
             }
         } catch (Exception ex) {
-            log("reading failed: " + ex.getMessage());
+            log("Reading Failed: " + ex.getMessage());
         }
     }
 
