@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 
 public class MainActivity extends Activity {
 
-
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_main);
@@ -28,15 +27,15 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // work with framework here
-                startActivity(new Intent(MainActivity.this, RfidActivity.class));
-
+                Intent i = new Intent(MainActivity.this, MRZCaptureActivity.class);
+                startActivity(i);
             }
         });
 
         findViewById(R.id.btnCapturing).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, ExperimentalActivity.class));
+                startActivity(new Intent(MainActivity.this, DocumentCapturingActivity.class));
             }
         });
     }

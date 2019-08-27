@@ -24,6 +24,8 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
+import com.jenid.genuineidmobilemrz.mrzreader.MRZReader;
+import com.jenid.genuineidmobilemrz.mrzreader.MRZReaderResult;
 import com.keesing.kvsclient.rfid.Logger;
 import com.keesing.kvsclient.rfid.PassportReader;
 import com.rabbitmq.client.Connection;
@@ -48,6 +50,7 @@ public class RfidActivity extends Activity {
     private ImageView imgChip;
     private int REQUEST_TAKE_PHOTO = 125630;
     private String currentPhotoPath;
+    private MRZReader mrzReader = null;
 
 
     @Override
@@ -58,7 +61,7 @@ public class RfidActivity extends Activity {
         findViewById(R.id.btnMrzRead).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // dispatchTakePictureIntent();
+               dispatchTakePictureIntent();
             }
         });
         Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/Ubuntu-Regular.ttf");
@@ -79,6 +82,7 @@ public class RfidActivity extends Activity {
         reader = new PassportReader();
         Logger logger = new Logger();
         framework = Framework.create(getString(R.string.epassport_test_licence), logger, reader, null, Framework.LogEverything);
+
 
     }
 
@@ -137,14 +141,22 @@ public class RfidActivity extends Activity {
             }
 
             // here we can send this picture to MRZ reader
-            /*runOnUiThread(new Runnable() {
+            runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                    Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, options);
+                    byte[] buffer = getNV21( bitmap.getWidth(), bitmap.getHeight(), bitmap);
+                    MRZReaderResult result = mrzReader.processFrame(buffer, bitmap.getWidth(), bitmap.getHeight());
+                    Log.i("KEESING.MRZ READER", result.toString());
+
                     imgChip.setImageURI(FileProvider.getUriForFile(RfidActivity.this,
                             "com.keesing.fileprovider",
                             new File(currentPhotoPath)));
                 }
-            });*/
+            });
 
         }
     }
@@ -158,6 +170,9 @@ public class RfidActivity extends Activity {
         tagDetected.addCategory(Intent.CATEGORY_DEFAULT);
         IntentFilter[] writeTagFilters = new IntentFilter[]{tagDetected};
         NfcAdapter.getDefaultAdapter(this).enableForegroundDispatch(this, pendingIntent, writeTagFilters, null);
+
+        //mrzReader = new MRZReader();
+        //mrzReader.initReader(this);
     }
 
     @Override
@@ -294,4 +309,55 @@ public class RfidActivity extends Activity {
 
         Connection conn = factory.newConnection();
     }
+
+    // untested function
+    private byte [] getNV21(int inputWidth, int inputHeight, Bitmap scaled) {
+
+        int [] argb = new int[inputWidth * inputHeight];
+
+        scaled.getPixels(argb, 0, inputWidth, 0, 0, inputWidth, inputHeight);
+
+        byte [] yuv = new byte[inputWidth*inputHeight*3/2];
+        encodeYUV420SP(yuv, argb, inputWidth, inputHeight);
+
+        scaled.recycle();
+
+        return yuv;
+    }
+
+    private void encodeYUV420SP(byte[] yuv420sp, int[] argb, int width, int height) {
+        final int frameSize = width * height;
+
+        int yIndex = 0;
+        int uvIndex = frameSize;
+
+        int a, R, G, B, Y, U, V;
+        int index = 0;
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
+
+                a = (argb[index] & 0xff000000) >> 24; // a is not used obviously
+                R = (argb[index] & 0xff0000) >> 16;
+                G = (argb[index] & 0xff00) >> 8;
+                B = (argb[index] & 0xff) >> 0;
+
+                // well known RGB to YUV algorithm
+                Y = ( (  66 * R + 129 * G +  25 * B + 128) >> 8) +  16;
+                U = ( ( -38 * R -  74 * G + 112 * B + 128) >> 8) + 128;
+                V = ( ( 112 * R -  94 * G -  18 * B + 128) >> 8) + 128;
+
+                // NV21 has a plane of Y and interleaved planes of VU each sampled by a factor of 2
+                //    meaning for every 4 Y pixels there are 1 V and 1 U.  Note the sampling is every other
+                //    pixel AND every other scanline.
+                yuv420sp[yIndex++] = (byte) ((Y < 0) ? 0 : ((Y > 255) ? 255 : Y));
+                if (j % 2 == 0 && index % 2 == 0) {
+                    yuv420sp[uvIndex++] = (byte)((V<0) ? 0 : ((V > 255) ? 255 : V));
+                    yuv420sp[uvIndex++] = (byte)((U<0) ? 0 : ((U > 255) ? 255 : U));
+                }
+
+                index ++;
+            }
+        }
+    }
+
 }

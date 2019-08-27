@@ -8,9 +8,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.MenuInflater;
-import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AlertDialog;
@@ -20,7 +17,7 @@ import com.jenid.mobile.capture.controller.GenuineIDActivity;
 import com.keesing.kvsclient.utils.WebServiceHelper;
 import com.keesing.kvsclient.utils.WebServicePostOperation;
 
-public class ExperimentalActivity extends GenuineIDActivity {
+public class DocumentCapturingActivity extends GenuineIDActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,7 +36,7 @@ public class ExperimentalActivity extends GenuineIDActivity {
             public void onFinish(String output, int statusCode) {
                 if (statusCode != 200) {
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ExperimentalActivity.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DocumentCapturingActivity.this);
                     builder
                             .setTitle(R.string.communication_problem_title)
                             .setMessage(R.string.webservice_connection_problem)
@@ -73,7 +70,7 @@ public class ExperimentalActivity extends GenuineIDActivity {
                 // show message to user...
                 if (statusCode == 200) {
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ExperimentalActivity.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DocumentCapturingActivity.this);
                     builder
                             .setTitle("Upload")
                             .setMessage(R.string.doc_submitted)
@@ -85,7 +82,7 @@ public class ExperimentalActivity extends GenuineIDActivity {
                             .show();
 
                 } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ExperimentalActivity.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DocumentCapturingActivity.this);
                     builder
                             .setTitle(R.string.communication_problem_title)
                             .setMessage(R.string.communication_problem_desc)
@@ -103,7 +100,7 @@ public class ExperimentalActivity extends GenuineIDActivity {
     }
 
     private void navigateBackHere() {
-        Intent i = new Intent(ExperimentalActivity.this, ExperimentalActivity.class);
+        Intent i = new Intent(DocumentCapturingActivity.this, DocumentCapturingActivity.class);
         startActivity(i);
         finish();
     }
@@ -115,7 +112,7 @@ public class ExperimentalActivity extends GenuineIDActivity {
             Bitmap backImage,
             String encodedBackImage,
             String completePayload) {
-        ExperimentalActivity.this.navigateBackHere();
+        DocumentCapturingActivity.this.navigateBackHere();
     }
 
     @Override
@@ -145,7 +142,7 @@ public class ExperimentalActivity extends GenuineIDActivity {
 
     @Override
     public void doAfterDeviceIsNotSupported(DeviceSupport deviceSupport) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ExperimentalActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(DocumentCapturingActivity.this);
         builder
                 .setTitle("Device not supported")
                 .setMessage("Problem happened running application <Cause: " + deviceSupport.toString() + ">")

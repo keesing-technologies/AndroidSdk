@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/mrzCaptureLayout" android:background="#ff000000" android:layout_width="fill_parent" android:layout_height="fill_parent" android:animateLayoutChanges="true"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <SurfaceView android:id="@+id/mrzSurfaceView" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_alignParentRight="true" android:layout_alignParentBottom="true" android:layout_alignParentStart="true" android:layout_alignParentEnd="true" />
+    <LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent">
+        <ImageView android:id="@+id/imageView5" android:background="@drawable/rectangle" android:layout_width="0.0dip" android:layout_height="fill_parent" android:layout_marginLeft="30.0dip" android:layout_marginTop="60.0dip" android:layout_marginBottom="60.0dip" android:layout_weight="0.3" android:alpha="0.1" />
+        <ImageView android:layout_width="0.0dip" android:layout_height="fill_parent" android:text="right" android:layout_weight="0.7" />
+    </LinearLayout>
+    <TextView android:textSize="30.0dip" android:id="@+id/editText_capture" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="53.0dip" android:text="bottom" android:rotation="90.0" />
+    <ImageView android:id="@+id/imageViewAutoFocus" android:layout_width="50.0dip" android:layout_height="50.0dip" android:layout_margin="5.0dip" android:src="@drawable/autofocus" android:layout_alignParentRight="true" android:layout_alignParentBottom="true" android:alpha="0.4" android:layout_alignParentEnd="true" />
+    <ImageView android:id="@+id/imageViewInfinity" android:layout_width="50.0dip" android:layout_height="50.0dip" android:layout_alignParentRight="true" android:layout_alignParentBottom="true" android:layout_alignParentEnd="true" />
+    <ImageView android:id="@+id/imageViewMacro" android:layout_width="50.0dip" android:layout_height="50.0dip" android:layout_alignParentRight="true" android:layout_alignParentBottom="true" android:layout_alignParentEnd="true" />
+    <ImageView android:id="@+id/imageViewOff" android:layout_width="50.0dip" android:layout_height="50.0dip" android:layout_alignParentRight="true" android:layout_alignParentBottom="true" android:layout_alignParentEnd="true" />
+</RelativeLayout>
