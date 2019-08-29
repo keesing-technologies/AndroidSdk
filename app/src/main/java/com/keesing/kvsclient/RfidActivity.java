@@ -20,16 +20,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
 import com.jenid.genuineidmobilemrz.mrzreader.MRZReader;
-import com.jenid.genuineidmobilemrz.mrzreader.MRZReaderResult;
 import com.keesing.kvsclient.rfid.Logger;
 import com.keesing.kvsclient.rfid.PassportReader;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+
+import com.keesing.kvsclient.utils.DataReceiver;
+import com.keesing.kvsclient.utils.SurysRabbitMQConsumer;
+import com.keesing.kvsclient.utils.SurysRabbitMQPublisher;
 import com.secunet.epassportapi.Framework;
 import com.secunet.epassportapi.Image;
 import com.secunet.epassportapi.ImageList;
@@ -39,7 +41,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.TimeoutException;
 
 public class RfidActivity extends Activity {
 
@@ -61,17 +62,17 @@ public class RfidActivity extends Activity {
         findViewById(R.id.btnMrzRead).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               dispatchTakePictureIntent();
+                dispatchTakePictureIntent();
             }
         });
         Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/Ubuntu-Regular.ttf");
 
-        ((Button)findViewById(R.id.btnMrzRead)).setTypeface(typeFace);
+        ((Button) findViewById(R.id.btnMrzRead)).setTypeface(typeFace);
 
         log = findViewById(R.id.txtOut);
         log.setTypeface(typeFace);
 
-        ((TextView)findViewById(R.id.rfidPageTitle)).setTypeface(typeFace);
+        ((TextView) findViewById(R.id.rfidPageTitle)).setTypeface(typeFace);
         mrzEdit = (EditText) findViewById(R.id.mrz);
         mrzEdit.setTypeface(typeFace);
         mrzEdit.setText("P<HUNKARPATI<<VIKTORIA<<<<<<<<<<<<<<<<<<<<<<\nHU12345600HUN9202287F1501010123456782<<<<<04");
@@ -141,14 +142,22 @@ public class RfidActivity extends Activity {
             }
 
             // here we can send this picture to MRZ reader
-            runOnUiThread(new Runnable() {
+
+            new SurysRabbitMQPublisher(currentPhotoPath, new DataReceiver<String>() {
+                @Override
+                public void run(String... params) {
+                    Toast.makeText(RfidActivity.this, params[0], Toast.LENGTH_LONG).show();
+                }
+            }).execute("");
+
+            /*runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
 
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inPreferredConfig = Bitmap.Config.ARGB_8888;
                     Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, options);
-                    byte[] buffer = getNV21( bitmap.getWidth(), bitmap.getHeight(), bitmap);
+                    byte[] buffer = getNV21(bitmap.getWidth(), bitmap.getHeight(), bitmap);
                     MRZReaderResult result = mrzReader.processFrame(buffer, bitmap.getWidth(), bitmap.getHeight());
                     Log.i("KEESING.MRZ READER", result.toString());
 
@@ -157,7 +166,7 @@ public class RfidActivity extends Activity {
                             new File(currentPhotoPath)));
                 }
             });
-
+*/
         }
     }
 
@@ -296,28 +305,14 @@ public class RfidActivity extends Activity {
         });
     }
 
-    private void sendImageToMrzReaderService() throws IOException, TimeoutException {
-        ConnectionFactory factory = new ConnectionFactory();
-        // "guest"/"guest" by default, limited to localhost connections
-        /*
-            factory.setUsername(userName);
-            factory.setPassword(password);
-            factory.setVirtualHost(virtualHost);
-            factory.setHost(hostName);
-            factory.setPort(portNumber);
-        */
-
-        Connection conn = factory.newConnection();
-    }
-
     // untested function
-    private byte [] getNV21(int inputWidth, int inputHeight, Bitmap scaled) {
+    private byte[] getNV21(int inputWidth, int inputHeight, Bitmap scaled) {
 
-        int [] argb = new int[inputWidth * inputHeight];
+        int[] argb = new int[inputWidth * inputHeight];
 
         scaled.getPixels(argb, 0, inputWidth, 0, 0, inputWidth, inputHeight);
 
-        byte [] yuv = new byte[inputWidth*inputHeight*3/2];
+        byte[] yuv = new byte[inputWidth * inputHeight * 3 / 2];
         encodeYUV420SP(yuv, argb, inputWidth, inputHeight);
 
         scaled.recycle();
@@ -342,20 +337,20 @@ public class RfidActivity extends Activity {
                 B = (argb[index] & 0xff) >> 0;
 
                 // well known RGB to YUV algorithm
-                Y = ( (  66 * R + 129 * G +  25 * B + 128) >> 8) +  16;
-                U = ( ( -38 * R -  74 * G + 112 * B + 128) >> 8) + 128;
-                V = ( ( 112 * R -  94 * G -  18 * B + 128) >> 8) + 128;
+                Y = ((66 * R + 129 * G + 25 * B + 128) >> 8) + 16;
+                U = ((-38 * R - 74 * G + 112 * B + 128) >> 8) + 128;
+                V = ((112 * R - 94 * G - 18 * B + 128) >> 8) + 128;
 
                 // NV21 has a plane of Y and interleaved planes of VU each sampled by a factor of 2
                 //    meaning for every 4 Y pixels there are 1 V and 1 U.  Note the sampling is every other
                 //    pixel AND every other scanline.
                 yuv420sp[yIndex++] = (byte) ((Y < 0) ? 0 : ((Y > 255) ? 255 : Y));
                 if (j % 2 == 0 && index % 2 == 0) {
-                    yuv420sp[uvIndex++] = (byte)((V<0) ? 0 : ((V > 255) ? 255 : V));
-                    yuv420sp[uvIndex++] = (byte)((U<0) ? 0 : ((U > 255) ? 255 : U));
+                    yuv420sp[uvIndex++] = (byte) ((V < 0) ? 0 : ((V > 255) ? 255 : V));
+                    yuv420sp[uvIndex++] = (byte) ((U < 0) ? 0 : ((U > 255) ? 255 : U));
                 }
 
-                index ++;
+                index++;
             }
         }
     }

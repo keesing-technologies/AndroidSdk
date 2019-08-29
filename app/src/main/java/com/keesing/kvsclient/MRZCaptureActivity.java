@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.SurfaceView;
 
 import com.jenid.genuineidmobilemrz.controller.GenuineIDMRZActivity;
 
@@ -15,6 +16,8 @@ public class MRZCaptureActivity  extends GenuineIDMRZActivity {
         super.onCreate(savedInstanceState);
         // I took this layout file from your demo app and added to our resource files
         this.setContentView(R.layout.activity_mrzcapture);
+        SurfaceView mrzSurfaceView = findViewById( R.id.mrzSurfaceView );
+        MRZCaptureActivity.super.setupMRZDetectionView(mrzSurfaceView);
     }
 
    @Override

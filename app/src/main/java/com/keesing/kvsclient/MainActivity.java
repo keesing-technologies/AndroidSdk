@@ -16,6 +16,12 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_main);
 
+
+        // System.loadLibrary("libopencv_java3");
+        // System.loadLibrary("everything");
+        // System.loadLibrary("genuineidapimrzlib");
+        System.loadLibrary("jenidcore");
+
         Typeface typeFace = Typeface.createFromAsset(getAssets(), "fonts/Ubuntu-Regular.ttf");
 
         ((Button)findViewById(R.id.btnRfid)).setTypeface(typeFace);
@@ -27,7 +33,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // work with framework here
-                Intent i = new Intent(MainActivity.this, MRZCaptureActivity.class);
+                Intent i = new Intent(MainActivity.this, RfidActivity.class);
                 startActivity(i);
             }
         });
