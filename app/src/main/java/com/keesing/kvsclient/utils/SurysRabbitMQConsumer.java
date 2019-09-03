@@ -1,6 +1,7 @@
 package com.keesing.kvsclient.utils;
 
 import android.util.JsonReader;
+import android.util.Log;
 
 import androidx.annotation.RequiresPermission;
 
@@ -21,6 +22,7 @@ import java.util.Base64;
 
 public class SurysRabbitMQConsumer implements Consumer {
 
+    private final String TAG = SurysRabbitMQConsumer.class.getName();
     private final Channel channel;
     private final DataReceiver<String> resultsListener;
 
@@ -37,7 +39,7 @@ public class SurysRabbitMQConsumer implements Consumer {
      */
     @Override
     public void handleConsumeOk(String consumerTag) {
-
+        Log.i(TAG, "handleConsumeOk " + consumerTag);
     }
 
     /**
@@ -47,7 +49,7 @@ public class SurysRabbitMQConsumer implements Consumer {
      */
     @Override
     public void handleCancelOk(String consumerTag) {
-
+        Log.i(TAG, "handleCancelOk " + consumerTag);
     }
 
     /**
@@ -61,7 +63,7 @@ public class SurysRabbitMQConsumer implements Consumer {
      */
     @Override
     public void handleCancel(String consumerTag) throws IOException {
-
+        Log.i(TAG, "handleCancel " + consumerTag);
     }
 
     /**
@@ -72,7 +74,7 @@ public class SurysRabbitMQConsumer implements Consumer {
      */
     @Override
     public void handleShutdownSignal(String consumerTag, ShutdownSignalException sig) {
-
+        Log.i(TAG, "handleShutdownSignal " + consumerTag);
     }
 
     /**
@@ -85,7 +87,7 @@ public class SurysRabbitMQConsumer implements Consumer {
      */
     @Override
     public void handleRecoverOk(String consumerTag) {
-
+        Log.i(TAG, "handleRecoverOk " + consumerTag);
     }
 
     /**
@@ -100,6 +102,7 @@ public class SurysRabbitMQConsumer implements Consumer {
      */
     @Override
     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+        Log.i(TAG, "handleDelivery " + consumerTag);
         this.channel.basicAck(envelope.getDeliveryTag(), false);
         String json = new String(body);
         this.resultsListener.run(json);
