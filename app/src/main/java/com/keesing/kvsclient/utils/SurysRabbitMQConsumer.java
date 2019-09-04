@@ -23,12 +23,15 @@ import java.util.Base64;
 public class SurysRabbitMQConsumer implements Consumer {
 
     private final String TAG = SurysRabbitMQConsumer.class.getName();
-    private final Channel channel;
+    private Channel channel;
     private final DataReceiver<String> resultsListener;
 
-    public SurysRabbitMQConsumer(Channel channel, DataReceiver<String> resultsListener) {
-        this.channel = channel;
+    public SurysRabbitMQConsumer(DataReceiver<String> resultsListener) {
         this.resultsListener = resultsListener;
+    }
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
     }
 
     /**

@@ -1,31 +1,46 @@
 package com.keesing.kvsclient.utils;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
-import android.util.Base64;
 import android.util.Log;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
+import org.apache.commons.codec.binary.Base64;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+
+// import android.util.Base64;
+
 
 public class SurysRabbitMQPublisher extends AsyncTask<String, Integer, Void> {
     private final String imagePath;//  {
-    private final DataReceiver consumer;
+    private final SurysRabbitMQConsumer consumer;
     private final String TAG = SurysRabbitMQPublisher.class.getName();
+    private ProgressDialog progressDialog = null;
 
-    private byte[] loadImage(String imgSrc) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
+    private byte[] loadImage(String imgSrc) throws IOException {
+
+        File file = new File(imgSrc);
+        BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+        byte[] buffer = new byte[(int) file.length()];
+        inputStream.read(buffer, 0, buffer.length);
+        inputStream.close();
+        return buffer;
+
+        /*BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         Bitmap bitmap = BitmapFactory.decodeFile(imgSrc, options);
 
@@ -33,17 +48,27 @@ public class SurysRabbitMQPublisher extends AsyncTask<String, Integer, Void> {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
         bitmap.recycle();
-        return byteArray;
+        return byteArray;*/
     }
 
-    public SurysRabbitMQPublisher(String imagePath, DataReceiver consumer) {
+    public SurysRabbitMQPublisher(Context context, String imagePath, SurysRabbitMQConsumer consumer) {
 
         this.imagePath = imagePath;
         this.consumer = consumer;
+
+        this.progressDialog = new ProgressDialog(context);
+        this.progressDialog.setCancelable(true);
+        this.progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                SurysRabbitMQPublisher.this.cancel(true);
+            }
+        });
     }
 
-    public void run() {
+    public void run(String... params) {
         try {
+
             ConnectionFactory factory = new ConnectionFactory();
             // "guest"/"guest" by default, limited to localhost connections
             factory.setUsername("keesing");
@@ -57,14 +82,22 @@ public class SurysRabbitMQPublisher extends AsyncTask<String, Integer, Void> {
 
             channel.queueDeclare("task_queue_mrz", true, false, false, null);
             // channel.queuePurge("task_queue_mrz");
-            String base64 = Base64.encodeToString(loadImage(this.imagePath), Base64.DEFAULT);
+
+            Base64 b64 = new Base64();
+            String base64 =  params.length == 1 ? params[0] :
+                    new String(b64.encode(loadImage(this.imagePath)));
+
+            if(!base64.startsWith("/9"))
+            {
+                base64 = base64.substring(base64.indexOf(",/9") + 1);
+            }
 
             String id = java.util.UUID.randomUUID().toString();
             AMQP.BasicProperties basicProps = new AMQP.BasicProperties().builder().deliveryMode(2).build();
 
             JSONObject jo = new JSONObject();
-            jo.put("name", this.imagePath.substring(this.imagePath.lastIndexOf(File.separatorChar)));
-            jo.put("bytes", base64.getBytes());
+            jo.put("name", this.imagePath.length() != 0 ? this.imagePath.substring(this.imagePath.lastIndexOf(File.separatorChar)) : "S_00123.jpg");
+            jo.put("bytes", base64);
             jo.put("id", id);
             String json = jo.toString();
 
@@ -73,7 +106,10 @@ public class SurysRabbitMQPublisher extends AsyncTask<String, Integer, Void> {
 
             channel.queueDeclare("result_MRZ_" + id, false, false, true, null);
 
-            channel.basicConsume("result_MRZ_" + id, false, new DefaultConsumer(channel) {
+
+            this.consumer.setChannel(channel);
+            channel.basicConsume("result_MRZ_" + id, false, this.consumer);
+            /*channel.basicConsume("result_MRZ_" + id, false, new DefaultConsumer(channel) {
 
                 @Override
                 public void handleDelivery(String consumerTag,
@@ -85,9 +121,10 @@ public class SurysRabbitMQPublisher extends AsyncTask<String, Integer, Void> {
                     Log.i(TAG, "handleDelivery " + consumerTag);
                     channel.basicAck(envelope.getDeliveryTag(), false);
                     String json = new String(body);
-
+                    Log.i(TAG, json);
+                    SurysRabbitMQPublisher.this.consumer.run(json);
                 }
-            });
+            });*/
 
 
             //new SurysRabbitMQConsumer(channel, this.consumer));
@@ -114,7 +151,20 @@ public class SurysRabbitMQPublisher extends AsyncTask<String, Integer, Void> {
     @Override
     protected Void doInBackground(String... strings) {
 
-        run();
+        run(strings);
         return null;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        this.progressDialog.setMessage("Extracting MRZ, Please wait...");
+        this.progressDialog.show();
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        if(this.progressDialog.isShowing()){
+            this.progressDialog.dismiss();
+        }
     }
 }

@@ -33,6 +33,7 @@ dependencies {
     api(name: 'epassportapi', ext: 'aar')
 
     implementation 'com.rabbitmq:amqp-client:4.9.3'
+    implementation 'commons-codec:commons-codec:1.13'
 
 
     /*api project(path: ':GenuineID_Mobile_Core-3_0_1_19128')

@@ -2,6 +2,7 @@ package com.keesing.kvsclient;
 
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -25,6 +26,9 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.jenid.genuineidmobilemrz.mrzreader.MRZReader;
 import com.keesing.kvsclient.rfid.Logger;
 import com.keesing.kvsclient.rfid.PassportReader;
@@ -38,9 +42,13 @@ import com.secunet.epassportapi.ImageList;
 import com.secunet.epassportapi.Passport;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
+import static android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
 
 public class RfidActivity extends Activity {
 
@@ -50,8 +58,13 @@ public class RfidActivity extends Activity {
     private TextView log;
     private ImageView imgChip;
     private int REQUEST_TAKE_PHOTO = 125630;
+    private int REQUEST_CROP_PHOTO = 234560;
     private String currentPhotoPath;
-    private MRZReader mrzReader = null;
+    private File photoFile = null;
+    // private MRZReader mrzReader = null;
+    private String mrzString = "";
+    private String capturingJson = "";
+
 
 
     @Override
@@ -72,11 +85,7 @@ public class RfidActivity extends Activity {
         log = findViewById(R.id.txtOut);
         log.setTypeface(typeFace);
 
-        ((TextView) findViewById(R.id.rfidPageTitle)).setTypeface(typeFace);
-        mrzEdit = (EditText) findViewById(R.id.mrz);
-        mrzEdit.setTypeface(typeFace);
-        mrzEdit.setText("P<HUNKARPATI<<VIKTORIA<<<<<<<<<<<<<<<<<<<<<<\nHU12345600HUN9202287F1501010123456782<<<<<04");
-        //mrzEdit.setText("P<NLDGROOS<<HERMAN<<<<<<<<<<<<<<<<<<<<<<<<<<\nNRL8B30500NLD7207222M2403133167605811<<<<<96");
+
 
         imgChip = findViewById(R.id.imgChip);
 
@@ -84,7 +93,23 @@ public class RfidActivity extends Activity {
         Logger logger = new Logger();
         framework = Framework.create(getString(R.string.epassport_test_licence), logger, reader, null, Framework.LogEverything);
 
+        Bundle extras = getIntent().getExtras();
+        if(extras != null) {
 
+            mrzString = extras.getString("mrz_string");
+            Log.d("RFIDActivity", mrzString);
+            ((TextView) findViewById(R.id.rfidPageTitle)).setTypeface(typeFace);
+            JsonParser jsonParser = new JsonParser();
+            JsonObject json = jsonParser.parse(mrzString).getAsJsonObject();
+
+            mrzEdit = (EditText) findViewById(R.id.mrz);
+            mrzEdit.setTypeface(typeFace);
+            String mrz = json.get("MRZ").getAsString();
+            mrz = mrz.replace("\n\f", "").replace(" ", "");
+            mrzEdit.setText(mrz);
+            // mrzEdit.setText("P<HUNKARPATI<<VIKTORIA<<<<<<<<<<<<<<<<<<<<<<\nHU12345600HUN9202287F1501010123456782<<<<<04");
+            // mrzEdit.setText("P<NLDGROOS<<HERMAN<<<<<<<<<<<<<<<<<<<<<<<<<<\nNRL8B30500NLD7207222M2403133167605811<<<<<96");
+        }
     }
 
     private void dispatchTakePictureIntent() {
@@ -92,7 +117,6 @@ public class RfidActivity extends Activity {
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
-            File photoFile = null;
             try {
                 photoFile = createTemporaryImage();
             } catch (IOException ex) {
@@ -142,13 +166,24 @@ public class RfidActivity extends Activity {
             }
 
             // here we can send this picture to MRZ reader
+            Uri picUri = FileProvider.getUriForFile(this, "com.keesing.fileprovider",photoFile);
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            //indicate image type and Uri
+            cropIntent.setDataAndType(picUri, "image/*");
+            //set crop properties
+            cropIntent.putExtra("crop", "true");
+            //indicate aspect of desired crop
+            //cropIntent.putExtra("aspectX", 1);
+            //cropIntent.putExtra("aspectY", 1);
+            //indicate output X and Y
+            cropIntent.putExtra("outputX", 256);
+            cropIntent.putExtra("outputY", 256);
+            //retrieve data on return
+            cropIntent.putExtra("return-data", true);
+            //start the activity - we handle returning in onActivityResult
+            cropIntent.setFlags(FLAG_GRANT_READ_URI_PERMISSION | FLAG_GRANT_WRITE_URI_PERMISSION);
+            startActivityForResult(cropIntent, REQUEST_CROP_PHOTO);
 
-            new SurysRabbitMQPublisher(currentPhotoPath, new DataReceiver<String>() {
-                @Override
-                public void run(String... params) {
-                    Toast.makeText(RfidActivity.this, params[0], Toast.LENGTH_LONG).show();
-                }
-            }).execute("");
 
             /*runOnUiThread(new Runnable() {
                 @Override
@@ -167,7 +202,38 @@ public class RfidActivity extends Activity {
                 }
             });
 */
+        } else if(requestCode == REQUEST_CROP_PHOTO && resultCode == RESULT_OK){
+
+            Bundle extras = data.getExtras();
+            Bitmap thePic = extras.getParcelable("data");
+
+            File directory = RfidActivity.this.getDir("imageDir", Context.MODE_PRIVATE);
+            // Create imageDir
+            File mypath=new File(directory,"profile.jpg");
+
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(mypath);
+                // Use the compress method on the BitMap object to write image to the OutputStream
+                thePic.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+           /* new SurysRabbitMQPublisher(RfidActivity.this,mypath.getPath(), new DataReceiver<String>() {
+                @Override
+                public void run(String... params) {
+                    Toast.makeText(RfidActivity.this, params[0], Toast.LENGTH_LONG).show();
+                }
+            }).execute("");*/
         }
+
     }
 
     @Override
@@ -179,6 +245,7 @@ public class RfidActivity extends Activity {
         tagDetected.addCategory(Intent.CATEGORY_DEFAULT);
         IntentFilter[] writeTagFilters = new IntentFilter[]{tagDetected};
         NfcAdapter.getDefaultAdapter(this).enableForegroundDispatch(this, pendingIntent, writeTagFilters, null);
+
 
         //mrzReader = new MRZReader();
         //mrzReader.initReader(this);
