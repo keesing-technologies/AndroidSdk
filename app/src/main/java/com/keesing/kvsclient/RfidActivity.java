@@ -335,6 +335,8 @@ public class RfidActivity extends Activity {
                         imgChip.setImageBitmap(bm);
                     }
                 });
+
+
                 log("Reading Finished");
             } catch (Exception e) {
                 Log.e("READING", e.getMessage());

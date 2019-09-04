@@ -1,7 +1,6 @@
 package com.keesing.kvsclient;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,7 +10,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -23,11 +21,8 @@ import com.keesing.kvsclient.utils.SurysRabbitMQPublisher;
 import com.keesing.kvsclient.utils.WebServiceHelper;
 import com.keesing.kvsclient.utils.WebServicePostOperation;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.nio.file.Files;
 
 public class DocumentCapturingActivity extends GenuineIDActivity {
 
@@ -102,66 +97,47 @@ public class DocumentCapturingActivity extends GenuineIDActivity {
                 b.putString("mrz_string", params[0]);
                 intent.putExtras(b);
                 startActivity(intent);
+                finish();
             }
         });
 
         new SurysRabbitMQPublisher(DocumentCapturingActivity.this, "",
                 this.consumer).execute(encodedFrontImage);
 
-       /* DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+        /*new WebServiceHelper(new WebServicePostOperation() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which){
-                    case DialogInterface.BUTTON_POSITIVE:
+            public void onFinish(String output, int statusCode) {
+                // show message to user...
+                if (statusCode == 200) {
 
-
-
-                        break;
-
-                    case DialogInterface.BUTTON_NEGATIVE:
-
-                        new WebServiceHelper(new WebServicePostOperation() {
-                            @Override
-                            public void onFinish(String output, int statusCode) {
-                                // show message to user...
-                                if (statusCode == 200) {
-
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(DocumentCapturingActivity.this);
-                                    builder
-                                            .setTitle("Upload")
-                                            .setMessage(R.string.doc_submitted)
-                                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    navigateBackHere();
-                                                }
-                                            }).setIcon(android.R.drawable.ic_dialog_info)
-                                            .show();
-
-                                } else {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(DocumentCapturingActivity.this);
-                                    builder
-                                            .setTitle(R.string.communication_problem_title)
-                                            .setMessage(R.string.communication_problem_desc)
-                                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    Log.d(TAG, completeJsonPayload);
-                                                    navigateBackHere();
-                                                }
-                                            }).setIcon(android.R.drawable.ic_dialog_alert)
-                                            .show();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DocumentCapturingActivity.this);
+                    builder
+                            .setTitle("Upload")
+                            .setMessage(R.string.doc_submitted)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    navigateBackHere();
                                 }
+                            }).setIcon(android.R.drawable.ic_dialog_info)
+                            .show();
 
-                            }
-                        }).execute("post", "", completeJsonPayload);
-
-                        break;
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DocumentCapturingActivity.this);
+                    builder
+                            .setTitle(R.string.communication_problem_title)
+                            .setMessage(R.string.communication_problem_desc)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.d(TAG, completeJsonPayload);
+                                    navigateBackHere();
+                                }
+                            }).setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
                 }
-            }
-        };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(DocumentCapturingActivity.this);
-        builder.setMessage("Do you want to perform RFID chip reading?").setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener).show();*/
+            }
+        }).execute("post", "", completeJsonPayload);*/
+
     }
 
     private void navigateBackHere() {
