@@ -115,7 +115,7 @@ You can build and execute the project on your device.
 
 This _Activity_ leads the end-user through the process of detecting id-documents, detecting
 ISO conform faces and proceeding a liveness check. As a result there will be cropped images of
-the id-documents pages, as well as valid _JSON_ data to be send to the _JenID Solutions GmbH server_
+the id-documents pages, as well as valid _JSON_ data to be send to the verification server
 for further processing, extracting of data and verification.
 
 The steps to be taken by the end-user are:
@@ -202,8 +202,7 @@ The call backs will have the following parameters:
 
 The resulting images of the pages of the document come in both, a _Bitmap_
 and a Base64 _String_ representation. The former could be used for your individual processing
-or showing to the end user. The Base64 String is optimized for uploading to the _JenID Solutions
-CLOUD_ in order to process the document.
+or showing to the end user. The Base64 String is optimized for uploading to the verification server in order to process the document.
 
 **Note:** The images are already compressed please DO NOT further compress the images
 since this will have negative impact on the performance of the Genuine-ID verification engine.
@@ -255,7 +254,7 @@ The following code snippet demonstrate how to use the _GenuineIDActivity_ in you
             String encodedFaceImage,
             String completeJsonPayload)
         {
-            // you can here perform the upload of the payload to the JenID Solutions GmbH server in another activity...
+            // you can here perform the upload of the payload to the verification server in another activity...
         }
 
         @Override
