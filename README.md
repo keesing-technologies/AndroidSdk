@@ -20,8 +20,6 @@ List of Contents
     - [Configuration](#configuration)
     - [Initializing the class](#initializing-the-class)
     - [Code Example](#code-example)
-    - [Send Data](#send-data)
-    - [Retrieve Data](#retrieve-data)
 - [UI Customization](#ui-customization)
 
 ---
@@ -94,9 +92,9 @@ Its highly recommended to review `GenuineIDActivity` implementation code to unde
 # Android Capture SDK (Integration Details)
 
 The Genuine-ID Capture SDK provides functionality to integrate ID document and facial capture functionality
-into your App to be verified by the Genuine-ID CLOUD (or a Genuine-ID HUB Server on premises installation).
+into your App to be verified by Keesing Technologies.
 The API is easy and simple to understand to limit the effort for integration and encapsulates all the complicated
-image processing functions for you. You simply need to integrate and configure only one _Activity_: GenuineIDActivity.
+image processing functions for you. As mentioned before you simply need to integrate and configure only one _Activity_: GenuineIDActivity.
 
 ## System Requirements
 
@@ -190,7 +188,7 @@ presenting the found document and the face image to the end user and starting ne
 and so on.
 
 In either way the instance will provide you the images in different formats
-and the compiled JSON formatted payload to be send to the Genuine-ID HUB Server (e.g. our Cloud Demo Server).
+and the compiled JSON formatted payload to be send to the verification server.
 
 The call backs will have the following parameters:
 
@@ -200,7 +198,7 @@ The call backs will have the following parameters:
 - String encodedBackImage -- base64 encoded format of the image
 - Bitmap faceImage -- facial image in case face capture is enabled or empty if face capture is disabled(see configuration)
 - String encodedFaceImage -- base64 encoded format of the image
-- String completeJsonPayload -- JSON formatted payload as input for the Genuine-ID HUB Server
+- String completeJsonPayload -- JSON formatted payload as input for to send to the verification server.
 
 The resulting images of the pages of the document come in both, a _Bitmap_
 and a Base64 _String_ representation. The former could be used for your individual processing
@@ -340,111 +338,6 @@ _onBackPressed_. Instead please override the method _backPressed_:
         startActivity(i);
         finish();
     }
-```
-
-### Send Data
-
-Sending data to the server requires several steps. To get more information please check
-our REST API documentation on https://checkid.online. Please use your demo credentials to log-in to get access.
-
-In the following we provide you only with a brief Java code snippet about how to do it from your App in principle.
-Once you have the payload available form the SDK you can send this to the Server by using the REST INSPECTIONJOB CREATE resource
-of the Genuine-ID HUB Server.
-
-```java
-String payloadData = "{\"inputData\": " + completeJsonPayload + "}";
-String basicAuth = new String(Base64.encode(( ... + ":" + ... ).getBytes(), Base64.DEFAULT)); // username:password
-
-try
-{
-  byte[] byte = (payloadData).getBytes("UTF-8");
-  String urlStr = "https://www.checkid.online/inspectionjob/create";
-  URL url = new URL( urlStr );
-
-  urlConnection = (HttpsUrlConnection) url.openConnection();
-  urlConnection.setRequestMethod("POST");
-  urlConnection.setRequestProperty("Authorization", "Basic "+ basicAuth);
-  urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-  urlConnection.setRequestProperty("Content-Length", String.valueOf(bytez.length));
-    urlConnection.setRequestProperty("Accept", "application/json");
-
-  outputStream = urlConnection.getOutputStream();
-  outputStream.write((payloadData).getBytes("UTF-8"));
-  outputStream.close();
-
-    in = urlConnection.getInputStream();
-
-  BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-  String line = null;
-  StringBuilder sb = new StringBuilder();
-  while ((line = br.readLine()) != null)
-  {
-    sb.append(line);
-  }
-
-  responseString = sb.toString();
-
-  br.close();
-
-  try
-  {
-    in.close();
-  }
-  catch (IOException e)
-  {
-    e.printStackTrace();
-  }
-
-  urlConnection.disconnect();
-}
-catch (Exception e)
-{
-  e.printStackTrace();
-}
-```
-
-### Retrieve Data
-
-The server supports synchronousness and synchronousness (legacy!!) calls. We recommend to use asynchronous calls only.
-
-To retrieve results, perform a GET request with the received id as a result of the upload process.
-If the "status" in the resulting JSON is different than "128" (FINISHED see REST API documentation), the processing on the server isn't done yet (asynchronous process);
-please request again until the "status" is "128" (FINISHED). Then you will have the final results. In all other states the results are not valid.
-
-```java
-String responseString = "";
-String basicAuth = new String(Base64.encode(( ... + ":" + ...).getBytes(), Base64.DEFAULT)); // username:password
-try
-{
-  URL url = new URL( "https://www.checkid.online/inspectionjob/" + id );
-  HttpsUrlConnection httpscon = (HttpsUrlConnection) url.openConnection();
-
-  httpscon.setRequestMethod("GET");
-  httpscon.setRequestProperty("Authorization", "Basic " + basicAuth);
-  httpscon.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-  httpscon.setRequestProperty("Accept", "application/json");
-  httpscon.connect();
-
-  BufferedReader br = new BufferedReader(new InputStreamReader(httpscon.getInputStream(), "UTF-8"));
-
-  String line = null;
-  StringBuilder sb = new StringBuilder();
-
-  while ((line = br.readLine()) != null) {
-    sb.append(line);
-  }
-
-  br.close();
-
-  responseString = sb.toString();
-
-} catch (IOException e) {
-  responseString = e.toString();
-} catch (Exception e) {
-  e.printStackTrace();
-  responseString = e.toString();
-}
-
 ```
 
 ---
