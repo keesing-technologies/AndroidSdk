@@ -83,7 +83,7 @@ public class SplashActivity extends Activity {
                     docFinder.init();
 
                     // This method will be executed once the timer is over
-                    Intent i = new Intent(SplashActivity.this, MainActivity.class);
+                    Intent i = new Intent(SplashActivity.this, DocumentCapturingActivity.class);
                     startActivity(i);
 
                     // close this activity

@@ -38,7 +38,7 @@ public class DocumentCapturingActivity extends GenuineIDActivity {
         super.onCreate(savedInstanceState);
 
         super.setTakePhotoTimeOut(15000);
-        super.setEnableFaceDetection(false);
+        super.setEnableFaceDetection(true);
 
         new WebServiceHelper(new WebServicePostOperation() {
             @Override
@@ -101,10 +101,10 @@ public class DocumentCapturingActivity extends GenuineIDActivity {
             }
         });
 
-        new SurysRabbitMQPublisher(DocumentCapturingActivity.this, "",
+        /*new SurysRabbitMQPublisher(DocumentCapturingActivity.this, "",
                 this.consumer).execute(encodedFrontImage);
-
-        /*new WebServiceHelper(new WebServicePostOperation() {
+*/
+        new WebServiceHelper(new WebServicePostOperation() {
             @Override
             public void onFinish(String output, int statusCode) {
                 // show message to user...
@@ -136,7 +136,7 @@ public class DocumentCapturingActivity extends GenuineIDActivity {
                 }
 
             }
-        }).execute("post", "", completeJsonPayload);*/
+        }).execute("post", "", completeJsonPayload);
 
     }
 
