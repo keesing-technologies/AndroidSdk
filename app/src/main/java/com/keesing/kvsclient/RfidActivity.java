@@ -3,6 +3,7 @@ package com.keesing.kvsclient;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -21,29 +22,30 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.jenid.genuineidmobilemrz.mrzreader.MRZReader;
 import com.keesing.kvsclient.rfid.Logger;
 import com.keesing.kvsclient.rfid.PassportReader;
-
-import com.keesing.kvsclient.utils.DataReceiver;
-import com.keesing.kvsclient.utils.SurysRabbitMQConsumer;
-import com.keesing.kvsclient.utils.SurysRabbitMQPublisher;
+import com.keesing.kvsclient.utils.WebServiceHelper;
+import com.keesing.kvsclient.utils.WebServicePostOperation;
 import com.secunet.epassportapi.Framework;
 import com.secunet.epassportapi.Image;
 import com.secunet.epassportapi.ImageList;
 import com.secunet.epassportapi.Passport;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.CharBuffer;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -66,7 +68,6 @@ public class RfidActivity extends Activity {
     private String capturingJson = "";
 
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +87,6 @@ public class RfidActivity extends Activity {
         log.setTypeface(typeFace);
 
 
-
         imgChip = findViewById(R.id.imgChip);
 
         reader = new PassportReader();
@@ -94,7 +94,7 @@ public class RfidActivity extends Activity {
         framework = Framework.create(getString(R.string.epassport_test_licence), logger, reader, null, Framework.LogEverything);
 
         Bundle extras = getIntent().getExtras();
-        if(extras != null) {
+        if (extras != null) {
 
             mrzString = extras.getString("mrz_string");
             Log.d("RFIDActivity", mrzString);
@@ -166,7 +166,7 @@ public class RfidActivity extends Activity {
             }
 
             // here we can send this picture to MRZ reader
-            Uri picUri = FileProvider.getUriForFile(this, "com.keesing.fileprovider",photoFile);
+            Uri picUri = FileProvider.getUriForFile(this, "com.keesing.fileprovider", photoFile);
             Intent cropIntent = new Intent("com.android.camera.action.CROP");
             //indicate image type and Uri
             cropIntent.setDataAndType(picUri, "image/*");
@@ -202,14 +202,14 @@ public class RfidActivity extends Activity {
                 }
             });
 */
-        } else if(requestCode == REQUEST_CROP_PHOTO && resultCode == RESULT_OK){
+        } else if (requestCode == REQUEST_CROP_PHOTO && resultCode == RESULT_OK) {
 
             Bundle extras = data.getExtras();
             Bitmap thePic = extras.getParcelable("data");
 
             File directory = RfidActivity.this.getDir("imageDir", Context.MODE_PRIVATE);
             // Create imageDir
-            File mypath=new File(directory,"profile.jpg");
+            File mypath = new File(directory, "profile.jpg");
 
             FileOutputStream fos = null;
             try {
@@ -338,6 +338,8 @@ public class RfidActivity extends Activity {
 
 
                 log("Reading Finished");
+
+                sendData();
             } catch (Exception e) {
                 Log.e("READING", e.getMessage());
                 log(e.getMessage());
@@ -372,6 +374,60 @@ public class RfidActivity extends Activity {
                 log.append(message);
             }
         });
+    }
+
+
+    private void sendData() {
+        try {
+            InputStreamReader inputStream =
+                    new InputStreamReader(RfidActivity.this.openFileInput("output.json"));
+            BufferedReader reader = new BufferedReader(inputStream);
+            final String json = reader.readLine();
+            reader.close();
+            inputStream.close();
+
+            new WebServiceHelper(new WebServicePostOperation() {
+                @Override
+                public void onFinish(String output, int statusCode) {
+                    // show message to user...
+                    if (statusCode == 200) {
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(RfidActivity.this);
+                        builder
+                                .setTitle("Upload")
+                                .setMessage(R.string.doc_submitted)
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        navigateBack();
+                                    }
+                                }).setIcon(android.R.drawable.ic_dialog_info)
+                                .show();
+
+                    } else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(RfidActivity.this);
+                        builder
+                                .setTitle(R.string.communication_problem_title)
+                                .setMessage(R.string.communication_problem_desc)
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // Log.d(TAG, completeJsonPayload);
+                                        navigateBack();
+                                    }
+                                }).setIcon(android.R.drawable.ic_dialog_alert)
+                                .show();
+                    }
+
+                }
+            }).execute("post", "", json);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void navigateBack(){
+        startActivity(new Intent(RfidActivity.this, DocumentCapturingActivity.class));
+        finish();
     }
 
     // untested function
