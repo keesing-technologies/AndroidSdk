@@ -38,6 +38,6 @@ ZHJvaWQhQHdDo1ay3wwDZMiC55uGkgT5/78nhNKUolD8DmfMdqVtv3nsj4WXzWB9
 hqsUqZgaS5kulHoSOPnC/8u9GF68PkQ=
 
 ----- LICENSE TEXT END -----</string>
-    <string name="rfid_page_title">Insert MRZ and place the document under the phone.</string>
+    <string name="rfid_page_title">MRZ should be auto-detected completely, if not please match below MRZ with the document and place the document under the phone.</string>
 
 </resources>
