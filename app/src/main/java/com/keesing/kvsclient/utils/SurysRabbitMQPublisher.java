@@ -84,28 +84,40 @@ public class SurysRabbitMQPublisher extends AsyncTask<String, Integer, Void> {
             // channel.queuePurge("task_queue_mrz");
 
             Base64 b64 = new Base64();
-            String base64 =  params.length == 1 ? params[0] :
+            String img1Base64 =  params.length >= 1 ? params[0] :
                     new String(b64.encode(loadImage(this.imagePath)));
 
-            if(!base64.startsWith("/9"))
-            {
-                base64 = base64.substring(base64.indexOf(",/9") + 1);
-            }
+            String img2Base64 = params.length == 2 ? params[1] : null;
 
             String id = java.util.UUID.randomUUID().toString();
             AMQP.BasicProperties basicProps = new AMQP.BasicProperties().builder().deliveryMode(2).build();
 
-            JSONObject jo = new JSONObject();
-            jo.put("name", this.imagePath.length() != 0 ? this.imagePath.substring(this.imagePath.lastIndexOf(File.separatorChar)) : "S_00123.jpg");
-            jo.put("bytes", base64);
-            jo.put("id", id);
-            String json = jo.toString();
+            if(!img1Base64.startsWith("/9"))
+                img1Base64 = img1Base64.substring(img1Base64.indexOf(",/9") + 1);
 
-            channel.basicPublish("", "task_queue_mrz", basicProps, json.getBytes());
+            JSONObject img1Json = new JSONObject();
+            img1Json.put("name", this.imagePath.length() != 0 ? this.imagePath.substring(this.imagePath.lastIndexOf(File.separatorChar)) : "S_00123.jpg");
+            img1Json.put("bytes", img1Base64);
+            img1Json.put("id", id);
+
+            channel.basicPublish("", "task_queue_mrz", basicProps, img1Json.toString().getBytes());
+
+            if( img2Base64 != null)
+            {
+                if(!img2Base64.startsWith("/9"))
+                    img2Base64 = img2Base64.substring(img2Base64.indexOf(",/9") + 1);
+
+                JSONObject img2Json = new JSONObject();
+                img2Json.put("name", this.imagePath.length() != 0 ? this.imagePath.substring(this.imagePath.lastIndexOf(File.separatorChar)) : "S_00123.jpg");
+                img2Json.put("bytes", img2Base64);
+                img2Json.put("id", id);
+
+                channel.basicPublish("", "task_queue_mrz", basicProps, img2Json.toString().getBytes());
+            }
+
             // channel.basicPublish("", "task_queue_mrz", basicProps, "finished".getBytes());
 
             channel.queueDeclare("result_MRZ_" + id, false, false, true, null);
-
 
             this.consumer.setChannel(channel);
             channel.basicConsume("result_MRZ_" + id, false, this.consumer);

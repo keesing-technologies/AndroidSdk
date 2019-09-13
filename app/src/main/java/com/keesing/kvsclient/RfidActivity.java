@@ -99,14 +99,11 @@ public class RfidActivity extends Activity {
             mrzString = extras.getString("mrz_string");
             Log.d("RFIDActivity", mrzString);
             ((TextView) findViewById(R.id.rfidPageTitle)).setTypeface(typeFace);
-            JsonParser jsonParser = new JsonParser();
-            JsonObject json = jsonParser.parse(mrzString).getAsJsonObject();
 
             mrzEdit = (EditText) findViewById(R.id.mrz);
             mrzEdit.setTypeface(typeFace);
-            String mrz = json.get("MRZ").getAsString();
-            mrz = mrz.replace("\n\f", "").replace(" ", "");
-            mrzEdit.setText(mrz);
+            mrzString = mrzString.replace("\n\f", "").replace(" ", "");
+            mrzEdit.setText(mrzString);
             // mrzEdit.setText("P<HUNKARPATI<<VIKTORIA<<<<<<<<<<<<<<<<<<<<<<\nHU12345600HUN9202287F1501010123456782<<<<<04");
             // mrzEdit.setText("P<NLDGROOS<<HERMAN<<<<<<<<<<<<<<<<<<<<<<<<<<\nNRL8B30500NLD7207222M2403133167605811<<<<<96");
         }

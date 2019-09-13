@@ -13,6 +13,8 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.jenid.mobile.capture.configuration.DeviceSupport;
 import com.jenid.mobile.capture.controller.GenuineIDActivity;
 import com.keesing.kvsclient.utils.DataReceiver;
@@ -62,6 +64,10 @@ public class DocumentCapturingActivity extends GenuineIDActivity {
         }).execute("get", "");
     }
 
+    private int numberOfImages = 1;
+    private int mrzCallsCount = 0;
+    private String mrz = "";
+
     @Override
     public void doAfterDocumentFound(
             Bitmap frontImage,
@@ -80,8 +86,7 @@ public class DocumentCapturingActivity extends GenuineIDActivity {
             public void run(String... params) {
                 // Toast.makeText(DocumentCapturingActivity.this, params[0], Toast.LENGTH_LONG).show();
                 // navigateBackHere();
-                Intent intent = new Intent(DocumentCapturingActivity.this, RfidActivity.class);
-                Bundle b = new Bundle();
+                mrzCallsCount++;
 
                 try {
                     OutputStreamWriter outputStreamWriter =
@@ -92,17 +97,32 @@ public class DocumentCapturingActivity extends GenuineIDActivity {
                     e.printStackTrace();
                 }
 
+                JsonParser jsonParser = new JsonParser();
+                JsonObject json = jsonParser.parse(params[0]).getAsJsonObject();
+                String tmp = json.get("MRZ").getAsString();
 
-                b.putString("capturing_json", "output.json");
-                b.putString("mrz_string", params[0]);
-                intent.putExtras(b);
-                startActivity(intent);
-                finish();
+                // check if mrz has been detected
+                if(!tmp.contains("failed_to_locate_mrz")) {
+                    mrz = tmp;
+                }
+
+                if(mrzCallsCount == numberOfImages) {
+                    Intent intent = new Intent(DocumentCapturingActivity.this, RfidActivity.class);
+                    Bundle b = new Bundle();
+                    b.putString("capturing_json", "output.json");
+                    b.putString("mrz_string", mrz);
+                    intent.putExtras(b);
+                    startActivity(intent);
+                    finish();
+                }
             }
         });
 
+        if (encodedBackImage!= null && encodedBackImage.length() != 0)
+            numberOfImages = 2;
+
         new SurysRabbitMQPublisher(DocumentCapturingActivity.this, "",
-                this.consumer).execute(encodedFrontImage);
+                this.consumer).execute(encodedFrontImage, encodedBackImage);
 
     }
 
