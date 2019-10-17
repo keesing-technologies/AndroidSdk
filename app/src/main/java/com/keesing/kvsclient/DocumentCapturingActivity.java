@@ -1,7 +1,6 @@
 package com.keesing.kvsclient;
 
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,16 +12,10 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AlertDialog;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.jenid.mobile.capture.configuration.DeviceSupport;
 import com.jenid.mobile.capture.controller.GenuineIDActivity;
-import com.keesing.kvsclient.utils.DataReceiver;
 import com.keesing.kvsclient.utils.WebServiceHelper;
 import com.keesing.kvsclient.utils.WebServicePostOperation;
-
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 public class DocumentCapturingActivity extends GenuineIDActivity {
 
@@ -77,8 +70,39 @@ public class DocumentCapturingActivity extends GenuineIDActivity {
 
         Log.i(TAG, completeJsonPayload);
 
+        new WebServiceHelper(new WebServicePostOperation() {
+            @Override
+            public void onFinish(String output, int statusCode) {
+                // show message to user...
+                if (statusCode == 200) {
 
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DocumentCapturingActivity.this);
+                    builder
+                            .setTitle("Upload")
+                            .setMessage(R.string.doc_submitted)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    navigateBackHere();
+                                }
+                            }).setIcon(android.R.drawable.ic_dialog_info)
+                            .show();
 
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DocumentCapturingActivity.this);
+                    builder
+                            .setTitle(R.string.communication_problem_title)
+                            .setMessage(R.string.communication_problem_desc)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // Log.d(TAG, completeJsonPayload);
+                                    navigateBackHere();
+                                }
+                            }).setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
+
+            }
+        }).execute("post", "", completeJsonPayload);
 
     }
 
