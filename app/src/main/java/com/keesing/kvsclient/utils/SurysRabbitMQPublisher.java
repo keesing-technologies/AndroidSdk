@@ -26,12 +26,20 @@ import java.io.IOException;
 
 
 public class SurysRabbitMQPublisher extends AsyncTask<String, Integer, Void> {
+
+    private final String Host = "188.165.87.235";
+    private final int Port = 5672;
+    private final String Username = "keesing";
+    private final String Password = "Surys2019$";
+
     private final String imagePath;//  {
     private final SurysRabbitMQConsumer consumer;
     private final String TAG = SurysRabbitMQPublisher.class.getName();
     private ProgressDialog progressDialog = null;
 
     private byte[] loadImage(String imgSrc) throws IOException {
+
+
 
         File file = new File(imgSrc);
         BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
@@ -71,11 +79,11 @@ public class SurysRabbitMQPublisher extends AsyncTask<String, Integer, Void> {
 
             ConnectionFactory factory = new ConnectionFactory();
             // "guest"/"guest" by default, limited to localhost connections
-            factory.setUsername("keesing");
-            factory.setPassword("test");
+            factory.setUsername(this.Username);
+            factory.setPassword(this.Password);
             factory.setVirtualHost("/");
-            factory.setHost("51.158.171.147");
-            factory.setPort(5672);
+            factory.setHost(this.Host);
+            factory.setPort(this.Port);
 
             Connection conn = factory.newConnection();
             final Channel channel = conn.createChannel();
