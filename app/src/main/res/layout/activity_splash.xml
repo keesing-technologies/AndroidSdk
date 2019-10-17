@@ -19,10 +19,10 @@
         -->
 
     <ImageView
-        android:layout_width="75dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/imageView"
-        android:src="@drawable/logo_corner"
+        android:src="@drawable/knb_log_title"
         android:layout_centerInParent="true" />
     <!--
     <ImageView

@@ -5,8 +5,8 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="Keesing Verification System Client"
+        android:icon="@mipmap/ic_avisi_logo_foreground"
+        android:label="notarisid"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:screenOrientation="sensorPortrait"
         android:supportsRtl="true"

@@ -33,7 +33,8 @@ public class DocumentCapturingActivity extends GenuineIDActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
-        this.setPrimaryColor(getResources().getColor(R.color.keesingBlue));
+        //this.setPrimaryColor(getResources().getColor(R.color.keesingBlue));
+        this.setPrimaryColor(Color.parseColor("#e73029"));
         this.setTextFont("fonts/Ubuntu-Regular.ttf");
         this.setSecondaryTextFont("fonts/Ubuntu-Italic.ttf");
 
@@ -146,7 +147,8 @@ public class DocumentCapturingActivity extends GenuineIDActivity {
     public void renderButton(Button button) {
         super.renderButton(button);
         button.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Ubuntu-Italic.ttf"));
-        button.setBackgroundColor(getResources().getColor(R.color.keesingBlue));
+        //button.setBackgroundColor(getResources().getColor(R.color.keesingBlue));
+        button.setBackgroundColor(Color.parseColor("#e73029"));
     }
 
     @Override
