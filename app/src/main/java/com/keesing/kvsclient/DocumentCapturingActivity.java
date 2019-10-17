@@ -18,8 +18,6 @@ import com.google.gson.JsonParser;
 import com.jenid.mobile.capture.configuration.DeviceSupport;
 import com.jenid.mobile.capture.controller.GenuineIDActivity;
 import com.keesing.kvsclient.utils.DataReceiver;
-import com.keesing.kvsclient.utils.SurysRabbitMQConsumer;
-import com.keesing.kvsclient.utils.SurysRabbitMQPublisher;
 import com.keesing.kvsclient.utils.WebServiceHelper;
 import com.keesing.kvsclient.utils.WebServicePostOperation;
 
@@ -27,8 +25,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 public class DocumentCapturingActivity extends GenuineIDActivity {
-
-    private SurysRabbitMQConsumer consumer = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,48 +78,7 @@ public class DocumentCapturingActivity extends GenuineIDActivity {
         Log.i(TAG, completeJsonPayload);
 
 
-        this.consumer = new SurysRabbitMQConsumer(new DataReceiver<String>() {
-            @Override
-            public void run(String... params) {
-                // Toast.makeText(DocumentCapturingActivity.this, params[0], Toast.LENGTH_LONG).show();
-                // navigateBackHere();
-                mrzCallsCount++;
 
-                try {
-                    OutputStreamWriter outputStreamWriter =
-                            new OutputStreamWriter(DocumentCapturingActivity.this.openFileOutput("output.json", Context.MODE_PRIVATE));
-                    outputStreamWriter.write(completeJsonPayload);
-                    outputStreamWriter.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                JsonParser jsonParser = new JsonParser();
-                JsonObject json = jsonParser.parse(params[0]).getAsJsonObject();
-                String tmp = json.get("MRZ").getAsString();
-
-                // check if mrz has been detected
-                if(!tmp.contains("failed_to_locate_mrz")) {
-                    mrz = tmp;
-                }
-
-                if(mrzCallsCount == numberOfImages) {
-                    Intent intent = new Intent(DocumentCapturingActivity.this, RfidActivity.class);
-                    Bundle b = new Bundle();
-                    b.putString("capturing_json", "output.json");
-                    b.putString("mrz_string", mrz);
-                    intent.putExtras(b);
-                    startActivity(intent);
-                    finish();
-                }
-            }
-        });
-
-        if (encodedBackImage!= null && encodedBackImage.length() != 0)
-            numberOfImages = 2;
-
-        new SurysRabbitMQPublisher(DocumentCapturingActivity.this, "",
-                this.consumer).execute(encodedFrontImage, encodedBackImage);
 
     }
 

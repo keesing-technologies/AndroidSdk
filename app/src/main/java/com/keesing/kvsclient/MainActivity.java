@@ -33,8 +33,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // work with framework here
-                Intent i = new Intent(MainActivity.this, RfidActivity.class);
-                startActivity(i);
+                //Intent i = new Intent(MainActivity.this, RfidActivity.class);
+                // startActivity(i);
             }
         });
 

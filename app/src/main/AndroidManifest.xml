@@ -30,12 +30,6 @@
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".RfidActivity"
-            android:label="RfidActivity" />
-        <activity
-            android:name=".MRZCaptureActivity"
-            android:label="MRZCaptureActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
