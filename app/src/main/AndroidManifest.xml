@@ -6,8 +6,8 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_avisi_logo_foreground"
+        android:roundIcon="@mipmap/ic_avisi_logo_round"
         android:label="notarisid"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:screenOrientation="sensorPortrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
