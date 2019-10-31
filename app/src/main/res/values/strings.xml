@@ -15,5 +15,29 @@
     <string name="communication_problem_title">Communication Problem!</string>
     <string name="detection_failed_title">Detection failed</string>
     <string name="detection_failed_desc">Document not found or Face Detection failed, please try again.</string>
+    <string name="epassport_test_licence">----- LICENSE TEXT BEGIN -----
+
+oIIBw6GCAX0iJGNlMDI1NzJiLWMxNWUtNGIxNy1hY2FiLTNkMzI0ZjNkYmVhNCIc
+
+c2VjdW5ldCBTZWN1cml0eSBOZXR3b3JrcyBBRyITVGVzdC1MaXplbnogS2Vlc2lu
+
+Z0AKIggyMDE5MDgwMcCBvMF4IhhNb2plLCBEZW5uaXMgKDIwMTktMjAyMSlACiII
+
+MjAxODEyMzFACiIIMjAyMTAxMDHCRCEg+1mcU0t5wE3wecA6O28iOaJsqJ3Zcclu
+
+xtnqye11tg8hII0fLYYDoNqt7PAmESf8dtpNZOvl+B2Uko+ihqo04nUhIUBbOatN
+
+m7pRmLbItCMnZXHtNsUfCRC/uGC05FjIj5rzZzEXBl1Hgn+DAtHGWCO+cVJFIqOR
+
+3/hlPzqG2Wsjbt4QpQ6pDEAKIggyMDIwMDkzMKZHp0UiDGVQYXNzcG9ydEFQSacF
+
+IgNFQUOnBiIERUFDMqcLIglTREtfQmFzaWOnDiIMU0RLX1BsYXRpbnVtpwkiB0Fu
+
+ZHJvaWQhQHdDo1ay3wwDZMiC55uGkgT5/78nhNKUolD8DmfMdqVtv3nsj4WXzWB9
+
+hqsUqZgaS5kulHoSOPnC/8u9GF68PkQ=
+
+----- LICENSE TEXT END -----</string>
+    <string name="rfid_page_title">MRZ should be auto-detected completely, if not please match below MRZ with the document and place the document under the phone.</string>
 
 </resources>

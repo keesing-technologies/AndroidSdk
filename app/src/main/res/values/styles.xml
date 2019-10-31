@@ -5,4 +5,19 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="info" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textSize">16dp</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="title" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textSize">20dp</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="title.bold" parent="title">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
 </resources>

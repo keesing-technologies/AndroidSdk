@@ -29,6 +29,12 @@ dependencies {
 
     api(name: 'Genuine-ID_Mobile_Core_3_0_2_19191', ext: 'aar')
     api(name: 'Genuine-ID_Mobile_Capture_3_0_2_19191', ext: 'aar')
+    api(name: 'Genuine-ID_Mobile_MRZ_3_0_2_19191', ext: 'aar')
+    api(name: 'epassportapi', ext: 'aar')
+
+    implementation 'com.rabbitmq:amqp-client:4.9.3'
+    implementation 'commons-codec:commons-codec:1.13'
+
 
     /*api project(path: ':GenuineID_Mobile_Core-3_0_1_19128')
     api project(path: ':GenuineID_Mobile_DocFinder-1_3_1_16329')
