@@ -29,7 +29,7 @@ public class WebServiceHelper extends AsyncTask<Object, Integer, String> {
     private WebServicePostOperation _callback;
     private int statusCode;
 
-    private final String BASE_ADDRESS = "https://acc-sdkapi.keesingtechnologies.com";
+    private final String BASE_ADDRESS = "https://test-demo.keesingtechnologies.com/sdkapi";
     // "https://devdocker01.ktech.local:8889/sdkapi";
     //private final String CERTIFICATE_HOSTNAME = "devws01.ktech.local";
 
