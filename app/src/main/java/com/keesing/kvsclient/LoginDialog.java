@@ -55,13 +55,10 @@ public class LoginDialog extends Dialog implements View.OnClickListener, WebServ
         hashedPasswd = md5(((EditText) this.findViewById(R.id.txtLoginPassword)).getText().toString().trim());
         account = ((EditText) this.findViewById(R.id.txtLoginAccount)).getText().toString().trim();
 
+        innerCreds = new LoginCredentials(account, username, hashedPasswd);
         // send to the end point
         WebServiceHelper web = new WebServiceHelper(this);
-        JsonObject jobj = new JsonObject();
-
-        jobj.addProperty("username", username);
-        jobj.addProperty("password", hashedPasswd);
-        // web.execute("POST", "", jobj.toString());
+        web.execute("POST", "", innerCreds);
         onFinish("", 200);
     }
 
@@ -80,24 +77,23 @@ public class LoginDialog extends Dialog implements View.OnClickListener, WebServ
         }
     }
 
+    private LoginCredentials innerCreds;
     @Override
     public void onFinish(String output, int statusCode) {
 
-        LoginCredentials lc  = new LoginCredentials(account, username, hashedPasswd);
-
         if (statusCode == 200) {
-            lc.setLastLoginTime(new Date().getTime());
-            this.loginListener.onSucceed(lc);
+            innerCreds.setLastLoginTime(new Date().getTime());
+            this.loginListener.onSucceed(innerCreds);
         } else {
             JsonParser jsonParser = new JsonParser();
             JsonObject json = jsonParser.parse(output).getAsJsonObject();
             String tmp = json.get("error").getAsString();
             ((EditText) this.findViewById(R.id.txtLoginUsername)).setText(tmp);
-            lc.setPassword("");
+            innerCreds.setPassword("");
 
             ((TextView) this.findViewById(R.id.txtLogingMessage)).setText(tmp);
 
-            this.loginListener.onFailed(tmp, lc);
+            this.loginListener.onFailed(tmp, innerCreds);
         }
     }
 }

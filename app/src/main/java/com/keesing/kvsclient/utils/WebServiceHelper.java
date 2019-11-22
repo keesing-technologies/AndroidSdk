@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -69,12 +70,11 @@ public class WebServiceHelper extends AsyncTask<Object, Integer, String> {
 
             if (method.equalsIgnoreCase("post")) {
 
-                Gson gson = new Gson();
                 String json = "";
-
                 if (params[2] instanceof String) {
                     json = (String) params[2];
                 } else {
+                    Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
                     json = gson.toJson(params[2]);
                 }
 
