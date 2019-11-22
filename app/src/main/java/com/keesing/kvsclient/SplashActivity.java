@@ -2,18 +2,24 @@ package com.keesing.kvsclient;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.jenid.mobile.capture.nativecode.DocFinder;
+import com.keesing.kvsclient.types.LoginCredentials;
+import com.keesing.kvsclient.utils.LoginOperationsListener;
+import com.keesing.kvsclient.utils.Store;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class SplashActivity extends Activity {
 
@@ -68,7 +74,37 @@ public class SplashActivity extends Activity {
             perms = permissions.toArray(perms);
             ActivityCompat.requestPermissions(this, perms, writeExternal);
         } else {
-            goOn();
+
+
+            LoginCredentials loginCredentials = Store.Retreive(SplashActivity.this, LoginCredentials.STORE_KEY, LoginCredentials.class);
+
+            if (loginCredentials == null || loginCredentials.isExpired()) {
+
+                LoginDialog dialog = new LoginDialog(this, loginCredentials, new LoginOperationsListener() {
+                    @Override
+                    public void onSucceed(LoginCredentials data) {
+                        // save data into private store and continue
+                        Store.Save(SplashActivity.this, LoginCredentials.STORE_KEY, data);
+                    }
+
+                    @Override
+                    public void onFailed(String error, LoginCredentials data) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(SplashActivity.this);
+                        builder
+                                .setTitle("Login Failed")
+                                .setMessage(error)
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        System.exit(0);
+                                    }
+                                }).setIcon(android.R.drawable.ic_dialog_alert)
+                                .show();
+                    }
+                });
+
+            }
+
+            // goOn();
         }
     }
 

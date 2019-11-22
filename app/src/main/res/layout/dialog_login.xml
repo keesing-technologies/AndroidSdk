@@ -1,33 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_margin="15dp"
-    android:layout_height="match_parent">
+    android:orientation="vertical">
 
-    <EditText android:hint="Account"
-        android:layout_width="match_parent" android:layout_marginTop="100dp"
+    <ImageView
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/txtLoginAccount" />
+        android:src="@drawable/keesing_logo_new_zwart"
+        android:layout_marginTop="100dp"/>
 
-    <EditText android:hint="Username"
-        android:layout_width="match_parent" android:layout_marginTop="5dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/txtLoginUsername" />
-
-    <EditText android:inputType="textPassword" android:hint="Password"
+    <EditText
+        android:id="@+id/txtLoginAccount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/txtLoginPassword" android:layout_marginTop="5dp" />
+        android:layout_marginTop="10dp"
+        android:hint="Account" />
 
-    <Button android:text="Login !"
-        android:layout_width="match_parent" android:layout_marginTop="15dp"
-        android:layout_height="wrap_content" android:id="@+id/btnLogin"
-        />
+    <EditText
+        android:id="@+id/txtLoginUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:hint="Username" />
+
+    <EditText
+        android:id="@+id/txtLoginPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:hint="Password"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Login !" />
 
     <TextView
+        android:id="@+id/txtLogingMessage"
+        style="@style/error.bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-android:id="@+id/txtLogingMessage" />
+        android:padding="10dp"
+        android:text="" />
 
 
 </LinearLayout>
