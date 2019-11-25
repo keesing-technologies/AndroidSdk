@@ -35,8 +35,8 @@ public class Store {
         if(json == null || json.length() == 0)
             return null;
         GsonBuilder gson = new GsonBuilder();
-        Type collectionType = new TypeToken<T>(){}.getType();
-        T obj = gson.create().fromJson("", collectionType);
+        // Type collectionType = new TypeToken<T>(){}.getType();
+        T obj = gson.create().fromJson(json, type);
         return obj;
     }
 

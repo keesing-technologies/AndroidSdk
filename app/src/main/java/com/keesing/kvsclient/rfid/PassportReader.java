@@ -7,7 +7,6 @@ import java.io.IOException;
 
 public class PassportReader extends RfidReaderBase {
 
-
     private static final String TAG = "KEESING.PassportReader";
     private volatile IsoDep tag;
     public void setTag(IsoDep tag)

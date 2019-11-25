@@ -26,6 +26,12 @@ public class LoginCredentials {
         this.password = password;
     }
 
+    public LoginCredentials() {
+        this.account = "";
+        this.username = "";
+        this.password = "";
+    }
+
     public String getAccount() {
         return account;
     }

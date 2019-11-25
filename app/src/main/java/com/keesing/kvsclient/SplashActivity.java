@@ -78,13 +78,13 @@ public class SplashActivity extends Activity {
 
             LoginCredentials loginCredentials = Store.Retreive(SplashActivity.this, LoginCredentials.STORE_KEY, LoginCredentials.class);
 
-            if (loginCredentials == null || loginCredentials.isExpired()) {
-
+            if (loginCredentials == null || !loginCredentials.isExpired()) {
                 LoginDialog dialog = new LoginDialog(this, loginCredentials, new LoginOperationsListener() {
                     @Override
                     public void onSucceed(LoginCredentials data) {
                         // save data into private store and continue
                         Store.Save(SplashActivity.this, LoginCredentials.STORE_KEY, data);
+
                     }
 
                     @Override
@@ -101,6 +101,8 @@ public class SplashActivity extends Activity {
                                 .show();
                     }
                 });
+
+                dialog.show();
 
             }
 
