@@ -1,6 +1,7 @@
 package com.keesing.kvsclient;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +25,8 @@ public final class LoginDialog extends Dialog implements View.OnClickListener, W
     private final LoginCredentials loginCredentials;
     private final LoginOperationsListener loginListener;
 
+    private EditText txtAcc = null, txtUn = null, txtPs = null;
+
     public LoginDialog(Context context, LoginCredentials loginCredentials, LoginOperationsListener listener) {
         super(context);
         this.loginCredentials = loginCredentials;
@@ -45,20 +48,41 @@ public final class LoginDialog extends Dialog implements View.OnClickListener, W
 
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(this.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT ;
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
         this.getWindow().setAttributes(lp);
         this.setCancelable(false);
+
+        txtAcc = this.findViewById(R.id.txtLoginAccount);
+        txtUn = this.findViewById(R.id.txtLoginUsername);
+        txtPs = this.findViewById(R.id.txtLoginPassword);
     }
 
     @Override
     public void onClick(View v) {
         try {
+
+            if (txtAcc.getText().toString().trim().length() == 0) {
+                txtAcc.setError("Account name has to be given.");
+                return;
+            }
+
+            if (txtUn.getText().toString().trim().length() == 0) {
+                txtUn.setError("Username has to be given.");
+                return;
+            }
+
+            if (txtPs.getText().toString().trim().length() == 0) {
+                txtPs.setError("Password can not be null.");
+                return;
+            }
+
             innerCredentials = new LoginCredentials();
-            innerCredentials.setAccount(((EditText) this.findViewById(R.id.txtLoginAccount)).getText().toString().trim());
-            innerCredentials.setUsername(((EditText) this.findViewById(R.id.txtLoginUsername)).getText().toString().trim());
-            innerCredentials.setPassword(Hashing.pdkdf2(((EditText) this.findViewById(R.id.txtLoginPassword)).getText().toString().trim()));
+            innerCredentials.setAccount(txtAcc.getText().toString().trim());
+            innerCredentials.setUsername(txtUn.getText().toString().trim());
+            innerCredentials.setPassword(Hashing.pdkdf2(txtPs.getText().toString().trim()));
             // send to the end point
+
             WebServiceHelper web = new WebServiceHelper(this);
             // web.execute("POST", "", innerCreds);
             onFinish("", 200);

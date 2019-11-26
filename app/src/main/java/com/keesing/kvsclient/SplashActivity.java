@@ -19,7 +19,6 @@ import com.keesing.kvsclient.utils.LoginOperationsListener;
 import com.keesing.kvsclient.utils.Store;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class SplashActivity extends Activity {
 
@@ -37,7 +36,7 @@ public class SplashActivity extends Activity {
                     // permission was granted, yay! Do the
                     // camera/storage-related task you need to do.
 
-                    goOn();
+                    // login();
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
@@ -73,40 +72,48 @@ public class SplashActivity extends Activity {
             String[] perms = new String[permissions.size()];
             perms = permissions.toArray(perms);
             ActivityCompat.requestPermissions(this, perms, writeExternal);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        login();
+    }
+
+    private void login() {
+
+        goOn();
+        if(true) return;
+
+        LoginCredentials loginCredentials = Store.Retreive(SplashActivity.this, LoginCredentials.STORE_KEY, LoginCredentials.class);
+
+        if (loginCredentials == null || loginCredentials.isExpired()) {
+            LoginDialog dialog = new LoginDialog(this, loginCredentials, new LoginOperationsListener() {
+                @Override
+                public void onSucceed(LoginCredentials data) {
+                    // save data into private store and continue
+                    Store.Save(SplashActivity.this, LoginCredentials.STORE_KEY, data);
+                    goOn();
+                }
+
+                @Override
+                public void onFailed(String error, LoginCredentials data) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SplashActivity.this);
+                    builder
+                            .setTitle("Login Failed")
+                            .setMessage(error)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    System.exit(0);
+                                }
+                            }).setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
+            });
+            dialog.show();
         } else {
-
-
-            LoginCredentials loginCredentials = Store.Retreive(SplashActivity.this, LoginCredentials.STORE_KEY, LoginCredentials.class);
-
-            if (loginCredentials == null || !loginCredentials.isExpired()) {
-                LoginDialog dialog = new LoginDialog(this, loginCredentials, new LoginOperationsListener() {
-                    @Override
-                    public void onSucceed(LoginCredentials data) {
-                        // save data into private store and continue
-                        Store.Save(SplashActivity.this, LoginCredentials.STORE_KEY, data);
-
-                    }
-
-                    @Override
-                    public void onFailed(String error, LoginCredentials data) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(SplashActivity.this);
-                        builder
-                                .setTitle("Login Failed")
-                                .setMessage(error)
-                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        System.exit(0);
-                                    }
-                                }).setIcon(android.R.drawable.ic_dialog_alert)
-                                .show();
-                    }
-                });
-
-                dialog.show();
-
-            }
-
-            // goOn();
+            goOn();
         }
     }
 

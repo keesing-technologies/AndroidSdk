@@ -21,21 +21,21 @@
         android:padding="7dp"
         android:text="Keesing Technologies &#174;" />
 
-    <EditText
+    <EditText android:imeOptions="actionNext"
         android:id="@+id/txtLoginAccount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:hint="Account" />
 
-    <EditText
+    <EditText android:imeOptions="actionNext"
         android:id="@+id/txtLoginUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:hint="Username" />
 
-    <EditText
+    <EditText android:imeOptions="actionDone"
         android:id="@+id/txtLoginPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -23,5 +23,17 @@
         <item name="android:textColor">#F51B00</item>
     </style>
 
+    <style name="nav.title" parent="nav.subtitle">
+        <item name="android:textStyle">bold</item>
+
+    </style>
+
+    <style name="nav.subtitle" parent="@style/TextAppearance.AppCompat.Body1">
+        <item name="android:textColor">@color/keesingBlue</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
+
+
 
 </resources>

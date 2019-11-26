@@ -81,6 +81,45 @@ public class DocumentCapturingActivity extends GenuineIDActivity {
         Log.i(TAG, completeJsonPayload);
 
 
+        new WebServiceHelper(new WebServicePostOperation() {
+            @Override
+            public void onFinish(String output, int statusCode) {
+                // show message to user...
+                if (statusCode == 200) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DocumentCapturingActivity.this);
+                    builder
+                            .setTitle("Upload")
+                            .setMessage(R.string.doc_submitted)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    navigateBackHere();
+                                }
+                            }).setIcon(android.R.drawable.ic_dialog_info)
+                            .show();
+
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DocumentCapturingActivity.this);
+                    builder
+                            .setTitle(R.string.communication_problem_title)
+                            .setMessage(R.string.communication_problem_desc)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // Log.d(TAG, completeJsonPayload);
+                                    navigateBackHere();
+                                }
+                            }).setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
+
+            }
+        }).execute("post", "", completeJsonPayload);
+
+
+        // Disable mrz extraction
+        if(true) return;
+
+
         this.consumer = new SurysRabbitMQConsumer(new DataReceiver<String>() {
             @Override
             public void run(String... params) {

@@ -1,5 +1,7 @@
 package com.keesing.kvsclient.utils;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -29,6 +31,7 @@ public class WebServiceHelper extends AsyncTask<Object, Integer, String> {
     public static final String TAG = "Keesing:WebService";
     private WebServicePostOperation _callback;
     private int statusCode;
+    private ProgressDialog progressDialog = null;
 
     private final String BASE_ADDRESS = "https://test-demo.keesingtechnologies.com/sdkapi";
     // "https://devdocker01.ktech.local:8889/sdkapi";
@@ -38,19 +41,40 @@ public class WebServiceHelper extends AsyncTask<Object, Integer, String> {
         _callback = callback;
     }
 
+    public WebServiceHelper(WebServicePostOperation callback, Context context, String progressDialogTitle, String progressDialogMessage) {
+        _callback = callback;
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setTitle(progressDialogTitle);
+        progressDialog.setMessage(progressDialogMessage);
+        progressDialog.setCancelable(false);
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        if(progressDialog != null)
+            progressDialog.show();
+    }
+
     @Override
     protected void onPostExecute(String s) {
+        if(progressDialog != null)
+            progressDialog.dismiss();
         this._callback.onFinish(s, this.statusCode);
     }
 
     @Override
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
+        if(this.progressDialog != null) {
+            this.progressDialog.setProgress(values[0]);
+        }
     }
 
     @Override
     protected String doInBackground(Object... params) {
         try {
+
             StringBuilder returnedData = new StringBuilder();
             // expecting to receive 3 params,
             // first: method like GET, POST, ...
@@ -87,7 +111,7 @@ public class WebServiceHelper extends AsyncTask<Object, Integer, String> {
             }
 
             this.statusCode = urlConnection.getResponseCode();
-            Log.i(TAG, method + " " + endpoint + " returned " + this.statusCode );
+            Log.i(TAG, method + " " + endpoint + " returned " + this.statusCode);
             if (this.statusCode == 200) {
                 InputStream in = urlConnection.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF8"));
@@ -130,7 +154,7 @@ public class WebServiceHelper extends AsyncTask<Object, Integer, String> {
      * aid testing on a local box, not for use on production.
      */
     private static void disableSSLCertificateChecking() {
-        TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
             public X509Certificate[] getAcceptedIssuers() {
                 return null;
             }
@@ -144,7 +168,7 @@ public class WebServiceHelper extends AsyncTask<Object, Integer, String> {
             public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
                 // Not implemented
             }
-        } };
+        }};
 
         try {
             SSLContext sc = SSLContext.getInstance("TLS");
