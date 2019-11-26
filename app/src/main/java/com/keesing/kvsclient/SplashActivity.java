@@ -83,9 +83,6 @@ public class SplashActivity extends Activity {
 
     private void login() {
 
-        goOn();
-        if(true) return;
-
         LoginCredentials loginCredentials = Store.Retreive(SplashActivity.this, LoginCredentials.STORE_KEY, LoginCredentials.class);
 
         if (loginCredentials == null || loginCredentials.isExpired()) {
