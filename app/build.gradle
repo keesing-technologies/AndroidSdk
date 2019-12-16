@@ -27,8 +27,8 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
-    api(name: 'Genuine-ID_Mobile_Core_3_0_2_19191', ext: 'aar')
-    api(name: 'Genuine-ID_Mobile_Capture_3_0_2_19191', ext: 'aar')
+    api(name: 'Genuine-ID_Mobile_Core_3_0_3_19339', ext: 'aar')
+    api(name: 'Genuine-ID_Mobile_Capture_3_0_3_19339', ext: 'aar')
     api(name: 'Genuine-ID_Mobile_MRZ_3_0_2_19191', ext: 'aar')
     api(name: 'epassportapi', ext: 'aar')
 
