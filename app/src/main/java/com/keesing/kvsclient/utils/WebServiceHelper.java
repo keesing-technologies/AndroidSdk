@@ -33,7 +33,7 @@ public class WebServiceHelper extends AsyncTask<Object, Integer, String> {
     private int statusCode;
     private ProgressDialog progressDialog = null;
 
-    private final String BASE_ADDRESS = "https://test-demo.keesingtechnologies.com/sdkapi";
+    private final String BASE_ADDRESS = "https://dev-demo.keesingtechnologies.com/sdkapi";
     // "https://devdocker01.ktech.local:8889/sdkapi";
     //private final String CERTIFICATE_HOSTNAME = "devws01.ktech.local";
 
