@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="experimental_app_name">Keesing Technologies KVS</string>
+    <string name="demo_app_name">Demo</string>
 
     <string name="action_settings">Settings</string>
 
@@ -8,8 +8,8 @@
     <string name="blue">blue</string>
     <string name="orange">orange</string>
 
-    <string name="title_activity_experimental">ExperimentalActivity</string>
-    <string name="webservice_connection_problem">Unable to connect to web service!</string>
+    <string name="title_activity_demo">DemoActivity</string>
+    <string name="webservice_connection_problem">Unable to connect to web service</string>
     <string name="doc_submitted">Document data submitted successfully.</string>
     <string name="communication_problem_desc">There was a problem sending document data, please contact system administrator.</string>
     <string name="communication_problem_title">Communication Problem!</string>

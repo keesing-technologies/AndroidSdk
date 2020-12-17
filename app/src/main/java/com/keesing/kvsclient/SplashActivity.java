@@ -6,13 +6,15 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MenuItem;
+
+import com.jenid.mobile.capture.nativecode.DocFinder;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.jenid.mobile.capture.nativecode.DocFinder;
-
+import java.security.Security;
 import java.util.ArrayList;
 
 public class SplashActivity extends Activity {
@@ -21,6 +23,10 @@ public class SplashActivity extends Activity {
     private static int SPLASH_TIME_OUT = 200;
 
     private final int writeExternal = 0;
+
+	//	static {
+	//		Security.insertProviderAt(new org.spongycastle.jce.provider.BouncyCastleProvider(), 1);
+	//	}
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
@@ -48,8 +54,6 @@ public class SplashActivity extends Activity {
                     startActivity(homeIntent);
                     // close the app
                 }
-
-                return;
             }
 
             // other 'case' lines to check for other
@@ -64,7 +68,7 @@ public class SplashActivity extends Activity {
 
         setContentView(R.layout.activity_splash);
 
-        ArrayList<String> permissions = new ArrayList<String>();
+        ArrayList<String> permissions = new ArrayList<>();
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
         {
@@ -81,7 +85,8 @@ public class SplashActivity extends Activity {
         {
             goOn();
         }
-    }
+	}
+
 
     private void goOn()
     {
@@ -97,7 +102,7 @@ public class SplashActivity extends Activity {
                     docFinder.init();
 
                     // This method will be executed once the timer is over
-                    Intent i = new Intent( SplashActivity.this, ExperimentalActivity.class );
+                    Intent i = new Intent( SplashActivity.this, DemoActivity.class );
                     startActivity(i);
 
                     // close this activity

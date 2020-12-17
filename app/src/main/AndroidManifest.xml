@@ -22,8 +22,8 @@
         </activity>
 
         <activity
-            android:name=".ExperimentalActivity"
-            android:label="@string/title_activity_experimental"></activity>
+            android:name=".DemoActivity"
+            android:label="@string/title_activity_demo"></activity>
 
     </application>
 
